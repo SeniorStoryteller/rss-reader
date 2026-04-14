@@ -28,5 +28,10 @@
     "name": "Wyndo",
     "url": "https://aimaker.substack.com/feed",
     "category": "Claude - Code"
+  },
+  {
+    "name": "Lenny's Podcast",
+    "url": "https://api.substack.com/feed/podcast/10845.rss",
+    "category": "AI - General"
   }
 ]

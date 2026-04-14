@@ -1,4 +1,4 @@
-import { formatDistanceToNow } from 'date-fns';
+import { format } from 'date-fns';
 import { CategoryBadge } from './CategoryBadge';
 import type { FeedItem } from '@/lib/types';
 
@@ -14,7 +14,7 @@ interface ArticleCardProps {
 export function ArticleCard({ item }: ArticleCardProps) {
   const relativeDate =
     item.timestamp > 0
-      ? formatDistanceToNow(new Date(item.timestamp), { addSuffix: true })
+      ? format(new Date(item.timestamp), 'EEE yyyy-MM-dd')
       : 'Unknown date';
 
   const fullDate =

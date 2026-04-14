@@ -14,7 +14,7 @@ export default async function handler(
   const now = Date.now();
 
   if (cachedResponse && now - lastFetchTime < DEDUP_INTERVAL) {
-    res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
+    res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate');
     return res.status(200).json(cachedResponse);
   }
 
@@ -25,7 +25,7 @@ export default async function handler(
     cachedResponse = data;
     lastFetchTime = Date.now();
 
-    res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
+    res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate');
     return res.status(200).json(data);
   } catch (error) {
     return res.status(500).json({

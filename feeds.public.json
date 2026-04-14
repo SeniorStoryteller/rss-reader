@@ -33,5 +33,15 @@
     "name": "Lenny's Podcast",
     "url": "https://api.substack.com/feed/podcast/10845.rss",
     "category": "AI - General"
+  },
+  {
+    "name": "Automato",
+    "url": "https://automato.substack.com/feed",
+    "category": "AI - General"
+  },
+  {
+    "name": "One Useful Thing",
+    "url": "https://www.oneusefulthing.org/feed",
+    "category": "AI - General"
   }
 ]

@@ -45,6 +45,23 @@ For feeds you don't want visible in the repo:
 1. Create `feeds.private.json` locally (already in `.gitignore`) with the same format
 2. On Vercel, set the `PRIVATE_FEEDS` environment variable to the JSON string contents of your private feeds config via the Vercel dashboard — never set secrets directly in the terminal
 
+## Admin Page (dev only)
+
+A local feed management UI is available during development at `http://localhost:3000/admin`.
+
+Start the dev server (`npm run dev`) and navigate to `/admin` — it is not available in production builds.
+
+### What it does
+
+- **Add feeds** — fill in name, URL (must start with `https://`), and category, then click Add Feed
+- **Edit feeds** — click Edit on any row to modify inline; Save or Cancel to confirm
+- **Delete feeds** — click Delete; confirms before removing
+- **Commit & Push** — once you've made changes, click "Commit & Push" to stage `feeds.public.json`, commit, and push to the current branch. Vercel will auto-deploy from that branch.
+
+All changes write directly to `feeds.public.json`. Run `npm run validate-feeds` at any time to confirm the file is still valid.
+
+The `/admin` route returns "Not available in production" when `NODE_ENV === 'production'`, and the admin API endpoints return 403.
+
 ## Merge Workflow
 
 All development flows through the `preview` branch before reaching `main`:

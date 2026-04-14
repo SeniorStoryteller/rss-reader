@@ -50,6 +50,20 @@ export function Sidebar({ categories }: SidebarProps) {
             );
           })}
         </ul>
+
+        {process.env.NODE_ENV !== 'production' && (
+          <div className="mt-6">
+            <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              Admin
+            </h2>
+            <Link
+              href="/admin"
+              className="block min-h-[44px] rounded-md px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+            >
+              Manage Feeds
+            </Link>
+          </div>
+        )}
       </nav>
     </aside>
   );

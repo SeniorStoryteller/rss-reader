@@ -20,7 +20,7 @@ export function Layout({
   children,
 }: LayoutProps) {
   return (
-    <div className="min-h-screen bg-gray-200 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-600 dark:bg-gray-900">
       <header className="border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
         <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4">
           <h1 className="shrink-0 text-xl font-bold text-gray-900 dark:text-gray-100">RSS Reader</h1>

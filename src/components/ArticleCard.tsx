@@ -55,9 +55,6 @@ export function ArticleCard({ item }: ArticleCardProps) {
             </div>
           )}
         </a>
-        <div className="absolute bottom-2 right-2">
-          <CategoryBadge category={item.category} href={`/category/${slugify(item.category)}`} />
-        </div>
       </div>
       <div className="flex flex-1 flex-col p-5">
         <div className="mb-2 flex items-center gap-2">
@@ -76,13 +73,16 @@ export function ArticleCard({ item }: ArticleCardProps) {
         <p className="mb-3 flex-1 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
           {excerpt}
         </p>
-        <time
-          className="text-xs text-gray-500 dark:text-gray-400"
-          title={fullDate}
-          dateTime={item.pubDate}
-        >
-          {relativeDate}
-        </time>
+        <div className="flex items-center justify-between">
+          <time
+            className="text-xs text-gray-500 dark:text-gray-400"
+            title={fullDate}
+            dateTime={item.pubDate}
+          >
+            {relativeDate}
+          </time>
+          <CategoryBadge category={item.category} href={`/category/${slugify(item.category)}`} />
+        </div>
       </div>
     </article>
   );

@@ -55,7 +55,7 @@ export function ArticleCard({ item }: ArticleCardProps) {
             </div>
           )}
         </a>
-        <div className="absolute right-2 top-2">
+        <div className="absolute bottom-2 right-2">
           <CategoryBadge category={item.category} href={`/category/${slugify(item.category)}`} />
         </div>
       </div>

@@ -2,6 +2,10 @@ import { formatDistanceToNow } from 'date-fns';
 import { CategoryBadge } from './CategoryBadge';
 import type { FeedItem } from '@/lib/types';
 
+const SOURCE_LOGOS: Record<string, string> = {
+  "Lenny's Podcast": '/Logo%20-%20Lennys%20Podcast.png',
+};
+
 interface ArticleCardProps {
   item: FeedItem;
 }
@@ -33,6 +37,14 @@ export function ArticleCard({ item }: ArticleCardProps) {
           decoding="async"
           className="h-48 w-full rounded-t-lg object-cover"
         />
+      ) : SOURCE_LOGOS[item.source] ? (
+        <div className="flex h-48 w-full items-center justify-center rounded-t-lg bg-black px-4">
+          <img
+            src={SOURCE_LOGOS[item.source]}
+            alt={item.source}
+            className="max-h-32 max-w-full object-contain"
+          />
+        </div>
       ) : (
         <div className="flex h-48 w-full items-center justify-center rounded-t-lg bg-black px-4">
           <span className="text-center text-lg font-semibold text-white">{item.source}</span>

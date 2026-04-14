@@ -30,27 +30,29 @@ export function ArticleCard({ item }: ArticleCardProps) {
 
   return (
     <article className="flex flex-col rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow duration-150 hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
-      {item.imageUrl ? (
-        <img
-          src={item.imageUrl}
-          alt=""
-          loading="lazy"
-          decoding="async"
-          className="h-48 w-full rounded-t-lg object-cover"
-        />
-      ) : SOURCE_LOGOS[item.source] ? (
-        <div className="flex h-48 w-full items-center justify-center rounded-t-lg bg-black px-4">
+      <a href={item.link} target="_blank" rel="noopener noreferrer" tabIndex={-1} aria-hidden="true">
+        {item.imageUrl ? (
           <img
-            src={SOURCE_LOGOS[item.source]}
-            alt={item.source}
-            className="max-h-32 max-w-full object-contain"
+            src={item.imageUrl}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            className="h-48 w-full rounded-t-lg object-cover"
           />
-        </div>
-      ) : (
-        <div className="flex h-48 w-full items-center justify-center rounded-t-lg bg-black px-4">
-          <span className="text-center text-lg font-semibold text-white">{item.source}</span>
-        </div>
-      )}
+        ) : SOURCE_LOGOS[item.source] ? (
+          <div className="flex h-48 w-full items-center justify-center rounded-t-lg bg-black px-4">
+            <img
+              src={SOURCE_LOGOS[item.source]}
+              alt={item.source}
+              className="max-h-32 max-w-full object-contain"
+            />
+          </div>
+        ) : (
+          <div className="flex h-48 w-full items-center justify-center rounded-t-lg bg-black px-4">
+            <span className="text-center text-lg font-semibold text-white">{item.source}</span>
+          </div>
+        )}
+      </a>
       <div className="flex flex-1 flex-col p-5">
         <div className="mb-2 flex items-center gap-2">
           <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{item.source}</span>

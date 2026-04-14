@@ -21,6 +21,9 @@ export default function Home() {
         <meta property="og:title" content="RSS Reader" />
         <meta property="og:description" content="A modern RSS feed reader" />
         <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://rss-reader-three-omega.vercel.app/RSS%20Reader%20-%20Featured%20Image.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content="https://rss-reader-three-omega.vercel.app/RSS%20Reader%20-%20Featured%20Image.png" />
       </Head>
 
       <Layout

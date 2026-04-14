@@ -14,7 +14,10 @@ export default function Home() {
 
   useEffect(() => {
     fetch('/api/feeds')
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
       .then((data: FeedApiResponse) => {
         setItems(data.items);
         setFailed(data.failed);
@@ -47,6 +50,10 @@ export default function Home() {
 
           <main id="main-content" className="min-w-0 flex-1">
             <FeedErrorNotice failed={failed} />
+
+            <div role="status" aria-live="polite" className="sr-only">
+              {loading ? 'Loading feed items...' : `${items.length} feed items loaded.`}
+            </div>
 
             {loading ? (
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">

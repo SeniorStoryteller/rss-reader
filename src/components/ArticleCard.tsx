@@ -33,7 +33,7 @@ export function ArticleCard({ item }: ArticleCardProps) {
           href={item.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="min-h-[44px] hover:text-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+          className="inline-block min-h-[44px] hover:text-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
         >
           {item.title}
         </a>

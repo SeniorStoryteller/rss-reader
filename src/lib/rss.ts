@@ -19,6 +19,9 @@ async function fetchSingleFeed(
 
   try {
     const response = await fetch(config.url, { signal: controller.signal });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status} ${response.statusText}`);
+    }
     const rawXml = await response.text();
     const cleanXml = stripXxeVectors(rawXml);
     const feed = await parser.parseString(cleanXml);

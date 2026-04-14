@@ -1,5 +1,4 @@
 import Ajv from 'ajv';
-import addFormats from 'ajv/dist/2019.js';
 import { readFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';

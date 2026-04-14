@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { slugify } from '@/lib/slugify';
 
 interface SidebarProps {
   categories: string[];
@@ -19,6 +20,7 @@ export function Sidebar({ categories }: SidebarProps) {
           <li>
             <Link
               href="/"
+              aria-current={!currentSlug ? 'page' : undefined}
               className={`block min-h-[44px] rounded-md px-3 py-2.5 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
                 !currentSlug
                   ? 'bg-blue-50 text-blue-700'
@@ -29,12 +31,13 @@ export function Sidebar({ categories }: SidebarProps) {
             </Link>
           </li>
           {categories.map((cat) => {
-            const slug = cat.toLowerCase().replace(/\s+/g, '-');
+            const slug = slugify(cat);
             const isActive = currentSlug === slug;
             return (
               <li key={cat}>
                 <Link
                   href={`/category/${slug}`}
+                  aria-current={isActive ? 'page' : undefined}
                   className={`block min-h-[44px] rounded-md px-3 py-2.5 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
                     isActive
                       ? 'bg-blue-50 text-blue-700'

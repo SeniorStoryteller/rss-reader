@@ -25,7 +25,7 @@ export function ArticleCard({ item }: ArticleCardProps) {
 
   return (
     <article className="flex flex-col rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow duration-150 hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
-      {item.imageUrl && (
+      {item.imageUrl ? (
         <img
           src={item.imageUrl}
           alt=""
@@ -33,6 +33,10 @@ export function ArticleCard({ item }: ArticleCardProps) {
           decoding="async"
           className="h-48 w-full rounded-t-lg object-cover"
         />
+      ) : (
+        <div className="flex h-48 w-full items-center justify-center rounded-t-lg bg-black px-4">
+          <span className="text-center text-lg font-semibold text-white">{item.source}</span>
+        </div>
       )}
       <div className="flex flex-1 flex-col p-5">
         <div className="mb-2 flex items-center gap-2">

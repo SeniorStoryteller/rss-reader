@@ -1,6 +1,8 @@
 # RSS Reader
 
-A modern, publicly accessible RSS feed reader built with Next.js and deployed on Vercel. Feed URLs are managed in a local config file and pushed to GitHub. The app is read-only and public — no authentication, no write operations.
+A modern, publicly accessible RSS feed reader built with Next.js and deployed on Vercel. Feed URLs are managed in a local config file and pushed to GitHub. The app is read-only and public — no authentication, no write operations from the public-facing side.
+
+**Production URL:** `https://rss-reader-three-omega.vercel.app`
 
 ## Tech Stack
 
@@ -23,20 +25,32 @@ The app runs at `http://localhost:3000`.
 
 ## Managing Feeds
 
-### Public feeds
+### Admin page (dev only)
 
-Edit `feeds.public.json` at the project root. Each entry has a `url` and `category`:
+The easiest way to manage feeds is via the built-in admin UI. Start the dev server and navigate to `http://localhost:3000/admin`. A **Manage Feeds** link also appears in the sidebar in dev mode.
+
+- **Add** — fill in name, URL (`https://` required), and category
+- **Edit** — click Edit on any row to modify inline
+- **Delete** — click Delete; confirms before removing
+- **Commit & Push** — commits `feeds.public.json` and pushes directly to `main`, triggering a Vercel production deployment. The button is disabled until a change has been made.
+
+The admin page and its API routes return 403 / "Not available" in production. The sidebar link is not rendered in production builds.
+
+### Manual editing
+
+Edit `feeds.public.json` at the project root directly. Each entry requires `name`, `url`, and `category`:
 
 ```json
 [
   {
+    "name": "Example Feed",
     "url": "https://example.com/feed.xml",
     "category": "Tech"
   }
 ]
 ```
 
-The file is validated against a JSON Schema by a pre-commit hook and in CI. Invalid changes will be rejected.
+The file is validated against `feeds.schema.json` by a pre-commit hook and in CI. Invalid changes will be rejected. After editing, commit and push to `main` to deploy.
 
 ### Private feeds
 
@@ -45,34 +59,38 @@ For feeds you don't want visible in the repo:
 1. Create `feeds.private.json` locally (already in `.gitignore`) with the same format
 2. On Vercel, set the `PRIVATE_FEEDS` environment variable to the JSON string contents of your private feeds config via the Vercel dashboard — never set secrets directly in the terminal
 
-## Admin Page (dev only)
+## Per-Source Logos
 
-A local feed management UI is available during development at `http://localhost:3000/admin`.
+Cards without a feed-supplied image show a black banner. To use a custom logo for a source:
 
-Start the dev server (`npm run dev`) and navigate to `/admin` — it is not available in production builds.
+1. Add the logo image to `public/` (e.g. `public/Logo - My Source.png`)
+2. Add one entry to the `SOURCE_LOGOS` map in `src/components/ArticleCard.tsx`:
 
-### What it does
+```ts
+const SOURCE_LOGOS: Record<string, string> = {
+  "Source Name As It Appears On Cards": '/Logo%20-%20My%20Source.png',
+};
+```
 
-- **Add feeds** — fill in name, URL (must start with `https://`), and category, then click Add Feed
-- **Edit feeds** — click Edit on any row to modify inline; Save or Cancel to confirm
-- **Delete feeds** — click Delete; confirms before removing
-- **Commit & Push** — once you've made changes, click "Commit & Push" to stage `feeds.public.json`, commit, and push to the current branch. Vercel will auto-deploy from that branch.
+The source name must match `item.source` exactly (visible in small text above each article title).
 
-All changes write directly to `feeds.public.json`. Run `npm run validate-feeds` at any time to confirm the file is still valid.
+Currently configured: **Lenny's Podcast**, **Wyndo** (AI Maker logo).
 
-The `/admin` route returns "Not available in production" when `NODE_ENV === 'production'`, and the admin API endpoints return 403.
+## Caching
+
+The feeds API uses `s-maxage=300` — the CDN caches feed content for up to 5 minutes. New feeds and new articles from existing feeds will appear on the live site within 5 minutes of a push, with no manual action needed.
 
 ## Merge Workflow
 
-All development flows through the `preview` branch before reaching `main`:
+Direct pushes to `main` are used for routine changes (feed edits, UI tweaks). Branch protection is in place but `enforce_admins` is `false`, so the repo owner can push directly.
+
+For larger changes that should go through CI:
 
 1. Push changes to the `preview` branch
-2. Verify the Vercel preview deployment works correctly
-3. Open a PR from `preview` to `main`
-4. Wait for CI to pass (feed validation, audit, type check, build)
-5. Merge the PR
-6. Verify the production deployment on Vercel
-7. Delete the preview deployment from the Vercel dashboard (free tier only allows limited deployments)
+2. Open a PR from `preview` to `main`
+3. Wait for CI to pass (feed validation, audit, type check, build)
+4. Merge the PR
+5. Verify the production deployment on Vercel
 
 The `preview` branch is permanent — never delete it.
 

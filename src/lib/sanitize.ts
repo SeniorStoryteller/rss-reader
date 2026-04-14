@@ -2,7 +2,7 @@ import { JSDOM } from 'jsdom';
 import DOMPurify from 'dompurify';
 
 const window = new JSDOM('').window;
-const purify = DOMPurify(window as unknown as Window);
+const purify = DOMPurify(window as unknown as typeof globalThis);
 
 purify.addHook('afterSanitizeAttributes', (node) => {
   if (node.hasAttribute('src')) {

@@ -3,7 +3,41 @@ import { sanitizeHtml } from './sanitize';
 import { parseDate } from './dates';
 import type { FeedConfig, FeedItem, FailedFeed } from './types';
 
-const parser = new Parser();
+type CustomItem = {
+  mediaContent?: { $?: { url?: string } };
+  mediaThumbnail?: { $?: { url?: string } };
+};
+
+const parser = new Parser<Record<string, never>, CustomItem>({
+  customFields: {
+    item: [
+      ['media:content', 'mediaContent'],
+      ['media:thumbnail', 'mediaThumbnail'],
+    ],
+  },
+});
+
+function extractImageUrl(item: Parser.Item & CustomItem): string | undefined {
+  // 1. enclosure (must be an image type)
+  if (item.enclosure?.url && item.enclosure.type?.startsWith('image/')) {
+    if (item.enclosure.url.startsWith('https://')) return item.enclosure.url;
+  }
+
+  // 2. media:content
+  const mediaContentUrl = item.mediaContent?.$?.url;
+  if (mediaContentUrl?.startsWith('https://')) return mediaContentUrl;
+
+  // 3. media:thumbnail
+  const mediaThumbnailUrl = item.mediaThumbnail?.$?.url;
+  if (mediaThumbnailUrl?.startsWith('https://')) return mediaThumbnailUrl;
+
+  // 4. first <img src="https://..."> in content HTML
+  const html = item.content || item.summary || '';
+  const match = html.match(/<img[^>]+src=["'](https:\/\/[^"']+)["']/i);
+  if (match?.[1]) return match[1];
+
+  return undefined;
+}
 
 function stripXxeVectors(xml: string): string {
   return xml
@@ -35,6 +69,7 @@ async function fetchSingleFeed(
       source: config.name,
       category: config.category,
       guid: item.guid || item.link || '',
+      imageUrl: extractImageUrl(item),
     }));
   } finally {
     clearTimeout(timeout);

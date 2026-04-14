@@ -25,12 +25,12 @@ export class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex min-h-screen items-center justify-center p-8">
+        <div className="flex min-h-screen items-center justify-center bg-gray-50 p-8 dark:bg-gray-900">
           <div className="text-center">
-            <h1 className="mb-4 text-2xl font-bold text-gray-900">
+            <h1 className="mb-4 text-2xl font-bold text-gray-900 dark:text-gray-100">
               Something went wrong
             </h1>
-            <p className="mb-6 text-gray-600">
+            <p className="mb-6 text-gray-600 dark:text-gray-400">
               An unexpected error occurred. Please try again.
             </p>
             <button

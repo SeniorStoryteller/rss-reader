@@ -42,9 +42,8 @@ export default async function handler(
     // Get commit hash
     const hash = await run('git', ['rev-parse', '--short', 'HEAD']);
 
-    // Push to current branch
-    const branch = await run('git', ['rev-parse', '--abbrev-ref', 'HEAD']);
-    await run('git', ['push', 'origin', branch]);
+    // Push to main (production)
+    await run('git', ['push', 'origin', 'HEAD:main']);
 
     return res.status(200).json({ success: true, hash, message });
   } catch (error) {

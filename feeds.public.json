@@ -35,6 +35,31 @@
     "category": "Product & Strategy"
   },
   {
+    "name": "No Priors",
+    "url": "https://feeds.megaphone.fm/nopriors",
+    "category": "Product & Strategy"
+  },
+  {
+    "name": "Hard Fork",
+    "url": "https://feeds.simplecast.com/l2i9YnTd",
+    "category": "Product & Strategy"
+  },
+  {
+    "name": "The AI Daily Brief",
+    "url": "https://anchor.fm/s/f7cac464/podcast/rss",
+    "category": "Product & Strategy"
+  },
+  {
+    "name": "Practical AI",
+    "url": "https://changelog.com/practicalai/feed",
+    "category": "Product & Strategy"
+  },
+  {
+    "name": "AI in Business",
+    "url": "https://techemergence.libsyn.com/rss",
+    "category": "Product & Strategy"
+  },
+  {
     "name": "Automato",
     "url": "https://automato.substack.com/feed",
     "category": "AI Automation"

@@ -5,9 +5,9 @@ export default function NotFound() {
   return (
     <>
       <Head>
-        <title>Page Not Found — RSS Reader</title>
+        <title>Page Not Found — All Things AI</title>
         <meta name="description" content="The page you are looking for could not be found." />
-        <meta property="og:title" content="Page Not Found — RSS Reader" />
+        <meta property="og:title" content="Page Not Found — All Things AI" />
         <meta property="og:description" content="The page you are looking for could not be found." />
         <meta property="og:type" content="website" />
       </Head>

@@ -2,12 +2,16 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { slugify } from '@/lib/slugify';
+import { SearchBar } from './SearchBar';
 
 interface MobileNavProps {
   categories: string[];
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
+  searchResultCount: number;
 }
 
-export function MobileNav({ categories }: MobileNavProps) {
+export function MobileNav({ categories, searchQuery, onSearchChange, searchResultCount }: MobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const currentSlug = router.query.slug as string | undefined;
@@ -143,6 +147,9 @@ export function MobileNav({ categories }: MobileNavProps) {
                 );
               })}
             </ul>
+            <div className="mt-4">
+              <SearchBar value={searchQuery} onChange={onSearchChange} resultCount={searchResultCount} />
+            </div>
           </nav>
         </div>
       )}

@@ -16,10 +16,10 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>RSS Reader</title>
-        <meta name="description" content="A modern RSS feed reader" />
-        <meta property="og:title" content="RSS Reader" />
-        <meta property="og:description" content="A modern RSS feed reader" />
+        <title>All Things AI</title>
+        <meta name="description" content="All Things AI — a curated RSS feed reader" />
+        <meta property="og:title" content="All Things AI" />
+        <meta property="og:description" content="All Things AI — a curated RSS feed reader" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://rss-reader-three-omega.vercel.app/RSS%20Reader%20-%20Featured%20Image.png" />
         <meta name="twitter:card" content="summary_large_image" />

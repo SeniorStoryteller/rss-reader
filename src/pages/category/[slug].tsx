@@ -31,9 +31,9 @@ export default function CategoryPage() {
     return (
       <>
         <Head>
-          <title>Category not found — RSS Reader</title>
+          <title>Category not found — All Things AI</title>
           <meta name="description" content="The requested category was not found." />
-          <meta property="og:title" content="Category not found — RSS Reader" />
+          <meta property="og:title" content="Category not found — All Things AI" />
           <meta property="og:description" content="The requested category was not found." />
           <meta property="og:type" content="website" />
         </Head>
@@ -64,7 +64,7 @@ export default function CategoryPage() {
   return (
     <>
       <Head>
-        <title>{categoryName ? `${categoryName} — RSS Reader` : 'RSS Reader'}</title>
+        <title>{categoryName ? `${categoryName} — All Things AI` : 'RSS Reader'}</title>
         <meta
           name="description"
           content={
@@ -75,7 +75,7 @@ export default function CategoryPage() {
         />
         <meta
           property="og:title"
-          content={categoryName ? `${categoryName} — RSS Reader` : 'RSS Reader'}
+          content={categoryName ? `${categoryName} — All Things AI` : 'RSS Reader'}
         />
         <meta
           property="og:description"

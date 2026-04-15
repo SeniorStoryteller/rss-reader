@@ -5,9 +5,9 @@ export default function ServerError() {
   return (
     <>
       <Head>
-        <title>Server Error — RSS Reader</title>
+        <title>Server Error — All Things AI</title>
         <meta name="description" content="Something went wrong on our end. Please try again later." />
-        <meta property="og:title" content="Server Error — RSS Reader" />
+        <meta property="og:title" content="Server Error — All Things AI" />
         <meta property="og:description" content="Something went wrong on our end. Please try again later." />
         <meta property="og:type" content="website" />
       </Head>

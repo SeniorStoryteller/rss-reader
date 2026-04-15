@@ -1,17 +1,21 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { slugify } from '@/lib/slugify';
+import { SearchBar } from './SearchBar';
 
 interface SidebarProps {
   categories: string[];
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
+  searchResultCount: number;
 }
 
-export function Sidebar({ categories }: SidebarProps) {
+export function Sidebar({ categories, searchQuery, onSearchChange, searchResultCount }: SidebarProps) {
   const router = useRouter();
   const currentSlug = router.query.slug as string | undefined;
 
   return (
-    <aside className="hidden w-56 shrink-0 md:block">
+    <aside className="hidden w-56 shrink-0 self-start sticky top-6 md:block">
       <nav aria-label="Category navigation">
         <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-100 dark:text-gray-400">
           Topics
@@ -50,8 +54,13 @@ export function Sidebar({ categories }: SidebarProps) {
             );
           })}
         </ul>
+      </nav>
 
-        {process.env.NODE_ENV !== 'production' && (
+      <div className="mt-4">
+        <SearchBar value={searchQuery} onChange={onSearchChange} resultCount={searchResultCount} />
+      </div>
+
+      {process.env.NODE_ENV !== 'production' && (
           <div className="mt-6">
             <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-100 dark:text-gray-400">
               Admin
@@ -64,7 +73,6 @@ export function Sidebar({ categories }: SidebarProps) {
             </Link>
           </div>
         )}
-      </nav>
     </aside>
   );
 }

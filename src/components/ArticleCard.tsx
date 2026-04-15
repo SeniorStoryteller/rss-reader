@@ -48,7 +48,7 @@ export function ArticleCard({ item }: ArticleCardProps) {
             alt=""
             loading="lazy"
             decoding="async"
-            className="h-full w-full object-cover"
+            className="h-full w-full object-contain"
           />
         ) : SOURCE_LOGOS[item.source] ? (
           <div className="flex h-full w-full items-center justify-center bg-black px-4">

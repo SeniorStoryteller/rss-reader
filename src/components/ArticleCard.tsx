@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { format, differenceInHours, differenceInDays } from 'date-fns';
 import { CategoryBadge } from './CategoryBadge';
 import { slugify } from '@/lib/slugify';
 import type { FeedItem } from '@/lib/types';
@@ -16,27 +16,31 @@ interface ArticleCardProps {
   item: FeedItem;
 }
 
-export function ArticleCard({ item }: ArticleCardProps) {
-  const relativeDate =
-    item.timestamp > 0
-      ? format(new Date(item.timestamp), 'EEE yyyy-MM-dd')
-      : 'Unknown date';
+function formatDisplayDate(timestamp: number): string {
+  if (timestamp === 0) return 'Unknown date';
+  const date = new Date(timestamp);
+  const now = new Date();
+  const hours = differenceInHours(now, date);
+  const days = differenceInDays(now, date);
 
+  if (hours < 1) return 'Just now';
+  if (hours < 24) return `${hours}h ago`;
+  if (days === 1) return 'Yesterday';
+  if (days === 2) return '2 days ago';
+  return format(date, 'EEE yyyy-MM-dd');
+}
+
+export function ArticleCard({ item }: ArticleCardProps) {
+  const displayDate = formatDisplayDate(item.timestamp);
   const fullDate =
     item.timestamp > 0
       ? new Date(item.timestamp).toUTCString()
       : 'Unknown date';
 
-  const excerpt = (() => {
-    if (item.description.length <= 300) return item.description;
-    const cut = item.description.lastIndexOf(' ', 300);
-    return item.description.slice(0, cut > 0 ? cut : 300) + '…';
-  })();
-
   return (
     <article className="relative flex flex-row overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow duration-150 hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
       {/* Left image panel — 1/3 width, full card height */}
-      <div className="w-1/3 shrink-0 self-stretch">
+      <div className="w-1/3 shrink-0 self-stretch bg-black">
         {item.imageUrl ? (
           <img
             src={item.imageUrl}
@@ -63,7 +67,7 @@ export function ArticleCard({ item }: ArticleCardProps) {
       {/* Right content panel */}
       <div className="flex flex-1 flex-col p-5">
         <p className="mb-1 text-sm font-medium text-gray-500 dark:text-gray-400">{item.source}</p>
-        <h2 className="mb-2 text-xl font-bold leading-snug text-gray-900 dark:text-gray-100">
+        <h2 className="mb-2 text-2xl font-bold leading-snug text-gray-900 dark:text-gray-100">
           <a
             href={item.link}
             target="_blank"
@@ -73,8 +77,8 @@ export function ArticleCard({ item }: ArticleCardProps) {
             {item.title}
           </a>
         </h2>
-        <p className="mb-4 flex-1 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
-          {excerpt}
+        <p className="mb-4 line-clamp-3 flex-1 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+          {item.description}
         </p>
         <div className="flex items-center justify-between">
           <time
@@ -82,7 +86,7 @@ export function ArticleCard({ item }: ArticleCardProps) {
             title={fullDate}
             dateTime={item.pubDate}
           >
-            {relativeDate}
+            {displayDate}
           </time>
           <span className="relative z-10">
             <CategoryBadge category={item.category} href={`/category/${slugify(item.category)}`} />

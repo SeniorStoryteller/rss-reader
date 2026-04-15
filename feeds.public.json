@@ -1,62 +1,57 @@
 [
   {
-    "name": "How to AI",
-    "url": "https://ruben.substack.com/feed",
-    "category": "Claude - Code"
-  },
-  {
     "name": "Michael Crist",
     "url": "https://michaelcrist.substack.com/feed",
-    "category": "Claude - Code"
+    "category": "Claude Code"
   },
   {
     "name": "Gary Marcus",
     "url": "https://garymarcus.substack.com/feed",
-    "category": "AI - General"
+    "category": "AI Critique"
   },
   {
     "name": "Yes, And Also No",
     "url": "https://rebeccabultsma.substack.com/feed",
-    "category": "AI - General"
+    "category": "AI Critique"
   },
   {
     "name": "Senior Storyteller",
     "url": "https://acommunityarchitect.substack.com/feed",
-    "category": "Claude - Code"
+    "category": "Claude Code"
   },
   {
     "name": "Wyndo",
     "url": "https://aimaker.substack.com/feed",
-    "category": "Claude - Code"
+    "category": "AI Automation"
   },
   {
     "name": "Lenny's Podcast",
     "url": "https://api.substack.com/feed/podcast/10845.rss",
-    "category": "AI - General"
+    "category": "Product & Strategy"
   },
   {
     "name": "Automato",
     "url": "https://automato.substack.com/feed",
-    "category": "AI - General"
+    "category": "AI Automation"
   },
   {
     "name": "One Useful Thing",
     "url": "https://www.oneusefulthing.org/feed",
-    "category": "AI - General"
+    "category": "AI & Work"
   },
   {
     "name": "Future-Proof Your Career with AI",
     "url": "https://khemaridh.substack.com/feed",
-    "category": "AI - General"
+    "category": "AI & Work"
   },
   {
     "name": "Response Awareness Methodology",
     "url": "https://responseawareness.substack.com/feed",
-    "category": "Claude - Code"
+    "category": "Claude Skills"
   },
   {
     "name": "Claude Skill of the Week",
     "url": "https://newsletter.genesysgrowth.com/feed",
-    "category": "Claude - Code"
+    "category": "Claude Skills"
   }
 ]

@@ -6,6 +6,7 @@ import type { FeedItem } from '@/lib/types';
 const SOURCE_LOGOS: Record<string, string> = {
   "Lenny's Podcast": '/Logo%20-%20Lennys%20Podcast.png',
   "Wyndo": '/Logo%20-%20AI%20Maker.png',
+  "The AI Daily Brief": '/Logo%20-%20AI%20Daily%20Brief.jpg',
 };
 
 interface ArticleCardProps {

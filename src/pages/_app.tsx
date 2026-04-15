@@ -13,7 +13,7 @@ export default function App({ Component, pageProps }: AppProps) {
         Skip to content
       </a>
       <ErrorBoundary>
-        <FeedDataProvider>
+        <FeedDataProvider initialData={pageProps.initialFeedData}>
           <Component {...pageProps} />
         </FeedDataProvider>
       </ErrorBoundary>

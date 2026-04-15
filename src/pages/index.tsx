@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import type { GetStaticProps } from 'next';
 import Head from 'next/head';
 import { ArticleCard } from '@/components/ArticleCard';
 import { SkeletonCard } from '@/components/SkeletonCard';
@@ -6,6 +7,9 @@ import { FeedErrorNotice } from '@/components/FeedErrorNotice';
 import { Layout } from '@/components/Layout';
 import { filterBySearch } from '@/lib/search';
 import { useFeedData } from '@/hooks/useFeedData';
+import { getFeeds } from '@/lib/feeds';
+import { fetchAllFeeds } from '@/lib/rss';
+import type { FeedApiResponse } from '@/lib/types';
 
 export default function Home() {
   const { items, failed, loading, categories } = useFeedData();
@@ -59,3 +63,12 @@ export default function Home() {
     </>
   );
 }
+
+export const getStaticProps: GetStaticProps<{ initialFeedData: FeedApiResponse }> = async () => {
+  const configs = getFeeds();
+  const data = await fetchAllFeeds(configs);
+  return {
+    props: { initialFeedData: data },
+    revalidate: 300,
+  };
+};

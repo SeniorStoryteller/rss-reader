@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import type { GetStaticProps, GetStaticPaths } from 'next';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -9,6 +10,9 @@ import { Layout } from '@/components/Layout';
 import { slugify } from '@/lib/slugify';
 import { filterBySearch } from '@/lib/search';
 import { useFeedData } from '@/hooks/useFeedData';
+import { getFeeds } from '@/lib/feeds';
+import { fetchAllFeeds } from '@/lib/rss';
+import type { FeedApiResponse } from '@/lib/types';
 
 export default function CategoryPage() {
   const router = useRouter();
@@ -123,3 +127,21 @@ export default function CategoryPage() {
     </>
   );
 }
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const configs = getFeeds();
+  const categories = Array.from(new Set(configs.map((c) => c.category)));
+  return {
+    paths: categories.map((cat) => ({ params: { slug: slugify(cat) } })),
+    fallback: 'blocking',
+  };
+};
+
+export const getStaticProps: GetStaticProps<{ initialFeedData: FeedApiResponse }> = async () => {
+  const configs = getFeeds();
+  const data = await fetchAllFeeds(configs);
+  return {
+    props: { initialFeedData: data },
+    revalidate: 300,
+  };
+};

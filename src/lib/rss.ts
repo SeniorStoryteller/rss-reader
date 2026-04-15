@@ -62,17 +62,20 @@ async function fetchSingleFeed(
     const cleanXml = stripXxeVectors(rawXml);
     const feed = await parser.parseString(cleanXml);
 
-    return (feed.items || []).slice(0, MAX_ITEMS_PER_FEED).map((item) => ({
-      title: item.title || 'Untitled',
-      link: item.link || '',
-      timestamp: parseDate(item.isoDate, item.pubDate),
-      pubDate: item.isoDate || item.pubDate || '',
-      description: sanitizeHtml(item.contentSnippet || item.content || item.summary || ''),
-      source: config.name,
-      category: config.category,
-      guid: item.guid || item.link || '',
-      imageUrl: extractImageUrl(item),
-    }));
+    return (feed.items || []).slice(0, MAX_ITEMS_PER_FEED).map((item) => {
+      const imageUrl = extractImageUrl(item);
+      return {
+        title: item.title || 'Untitled',
+        link: item.link || '',
+        timestamp: parseDate(item.isoDate, item.pubDate),
+        pubDate: item.isoDate || item.pubDate || '',
+        description: sanitizeHtml(item.contentSnippet || item.content || item.summary || ''),
+        source: config.name,
+        category: config.category,
+        guid: item.guid || item.link || '',
+        ...(imageUrl ? { imageUrl } : {}),
+      };
+    });
   } finally {
     clearTimeout(timeout);
   }

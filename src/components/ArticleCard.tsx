@@ -7,6 +7,9 @@ const SOURCE_LOGOS: Record<string, string> = {
   "Lenny's Podcast": '/Logo%20-%20Lennys%20Podcast.png',
   "Wyndo": '/Logo%20-%20AI%20Maker.png',
   "The AI Daily Brief": '/Logo%20-%20AI%20Daily%20Brief.jpg',
+  "Hard Fork": '/Logo%20-%20Hard%20Fork.png',
+  "Practical AI": '/Logo%20-%20Practical%20AI.webp',
+  "AI in Business": '/Logo%20-%20AI%20in%20Business.png',
 };
 
 interface ArticleCardProps {

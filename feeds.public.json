@@ -78,10 +78,5 @@
     "name": "Claude Skill of the Week",
     "url": "https://newsletter.genesysgrowth.com/feed",
     "category": "Claude Skills"
-  },
-  {
-    "name": "OpenAI News",
-    "url": "https://openai.com/blog/rss.xml",
-    "category": "Product & Strategy"
   }
 ]

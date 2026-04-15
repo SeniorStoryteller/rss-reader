@@ -144,3 +144,50 @@ Each phase is designed to be completed in a single Claude Code session. Phases b
 - **Commit & Push goes directly to `main`** — pushes to `HEAD:main` instead of the current branch; branch protection is bypassed for the repo owner (`enforce_admins: false`)
 
 **Done when:** All of the above is committed to `main`, CI has passed, and the live site at `https://rss-reader-three-omega.vercel.app` reflects all changes.
+
+---
+
+## Post-Phase 7 Feed & UI Session ✅ Complete
+
+### Feed changes
+- **Topic categories** — feeds reclassified into six granular categories: `Claude Code`, `Claude Skills`, `AI Automation`, `AI & Work`, `Product & Strategy`, `AI Critique`
+- **"Categories" renamed to "Topics"** — sidebar heading and "All Feeds" link updated to "Topics" / "All Topics" in both `Sidebar.tsx` and `MobileNav.tsx`
+- **How to AI restored** — `https://ruben.substack.com/feed` (was lost during category update, re-added to `Claude Code`)
+- **New Product & Strategy feeds added:** Hard Fork, The AI Daily Brief, Practical AI, AI in Business
+- **No Priors removed** — `feeds.megaphone.fm/nopriors` feed items have no individual article page links (only MP3 enclosures), so articles were unclickable
+
+### Logo additions
+All logos live in `public/` and are mapped in `SOURCE_LOGOS` in `src/components/ArticleCard.tsx`:
+
+| Source name (must match exactly) | File |
+|---|---|
+| Lenny's Podcast | `Logo - Lennys Podcast.png` |
+| Wyndo | `Logo - AI Maker.png` |
+| The AI Daily Brief | `Logo - AI Daily Brief.jpg` |
+| Hard Fork | `Logo - Hard Fork.png` |
+| Practical AI | `Logo - Practical AI.webp` |
+| AI in Business | `Logo - AI in Business.png` |
+
+### Current feed list (17 feeds)
+
+| Name | Category |
+|---|---|
+| How to AI | Claude Code |
+| Michael Crist | Claude Code |
+| Senior Storyteller | Claude Code |
+| Claude Skill of the Week | Claude Skills |
+| Response Awareness Methodology | Claude Skills |
+| Wyndo | AI Automation |
+| Automato | AI Automation |
+| One Useful Thing | AI & Work |
+| Future-Proof Your Career with AI | AI & Work |
+| Lenny's Podcast | Product & Strategy |
+| Hard Fork | Product & Strategy |
+| The AI Daily Brief | Product & Strategy |
+| Practical AI | Product & Strategy |
+| AI in Business | Product & Strategy |
+| Gary Marcus | AI Critique |
+| Yes, And Also No | AI Critique |
+
+### YouTube RSS note
+YouTube provides RSS feeds at `https://www.youtube.com/feeds/videos.xml?channel_id=CHANNEL_ID`. The channel ID (format: `UCxxxxxxxxx`) must be found by viewing the channel page source. YouTube feeds use Atom format — articles link correctly but images require either a logo entry in `SOURCE_LOGOS` or custom `media:group` thumbnail parsing in `src/lib/rss.ts`.

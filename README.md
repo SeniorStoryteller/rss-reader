@@ -74,7 +74,16 @@ const SOURCE_LOGOS: Record<string, string> = {
 
 The source name must match `item.source` exactly (visible in small text above each article title).
 
-Currently configured: **Lenny's Podcast**, **Wyndo** (AI Maker logo).
+Currently configured:
+
+| Source name | File |
+|---|---|
+| Lenny's Podcast | `Logo - Lennys Podcast.png` |
+| Wyndo | `Logo - AI Maker.png` |
+| The AI Daily Brief | `Logo - AI Daily Brief.jpg` |
+| Hard Fork | `Logo - Hard Fork.png` |
+| Practical AI | `Logo - Practical AI.webp` |
+| AI in Business | `Logo - AI in Business.png` |
 
 ## Caching
 

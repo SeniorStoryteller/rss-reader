@@ -28,53 +28,52 @@ export function ArticleCard({ item }: ArticleCardProps) {
       : 'Unknown date';
 
   const excerpt = (() => {
-    if (item.description.length <= 200) return item.description;
-    const cut = item.description.lastIndexOf(' ', 200);
-    return item.description.slice(0, cut > 0 ? cut : 200) + '…';
+    if (item.description.length <= 300) return item.description;
+    const cut = item.description.lastIndexOf(' ', 300);
+    return item.description.slice(0, cut > 0 ? cut : 300) + '…';
   })();
 
   return (
-    <article className="flex flex-col rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow duration-150 hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
-      <div className="relative">
-        <a href={item.link} target="_blank" rel="noopener noreferrer" tabIndex={-1} aria-hidden="true">
-          {item.imageUrl ? (
+    <article className="relative flex flex-row overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow duration-150 hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
+      {/* Left image panel — 1/3 width, full card height */}
+      <div className="w-1/3 shrink-0 self-stretch">
+        {item.imageUrl ? (
+          <img
+            src={item.imageUrl}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-cover"
+          />
+        ) : SOURCE_LOGOS[item.source] ? (
+          <div className="flex h-full w-full items-center justify-center bg-black px-4">
             <img
-              src={item.imageUrl}
-              alt=""
-              loading="lazy"
-              decoding="async"
-              className="h-48 w-full rounded-t-lg object-cover"
+              src={SOURCE_LOGOS[item.source]}
+              alt={item.source}
+              className="max-h-32 max-w-full object-contain"
             />
-          ) : SOURCE_LOGOS[item.source] ? (
-            <div className="flex h-48 w-full items-center justify-center rounded-t-lg bg-black px-4">
-              <img
-                src={SOURCE_LOGOS[item.source]}
-                alt={item.source}
-                className="max-h-32 max-w-full object-contain"
-              />
-            </div>
-          ) : (
-            <div className="flex h-48 w-full items-center justify-center rounded-t-lg bg-black px-4">
-              <span className="text-center text-lg font-semibold text-white">{item.source}</span>
-            </div>
-          )}
-        </a>
+          </div>
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-black px-4">
+            <span className="text-center text-lg font-semibold text-white">{item.source}</span>
+          </div>
+        )}
       </div>
+
+      {/* Right content panel */}
       <div className="flex flex-1 flex-col p-5">
-        <div className="mb-2 flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{item.source}</span>
-        </div>
-        <h2 className="mb-2 text-lg font-semibold leading-snug text-gray-900 dark:text-gray-100">
+        <p className="mb-1 text-sm font-medium text-gray-500 dark:text-gray-400">{item.source}</p>
+        <h2 className="mb-2 text-xl font-bold leading-snug text-gray-900 dark:text-gray-100">
           <a
             href={item.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block min-h-[44px] hover:text-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:hover:text-blue-400"
+            className="after:absolute after:inset-0 hover:text-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:hover:text-blue-400"
           >
             {item.title}
           </a>
         </h2>
-        <p className="mb-3 flex-1 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+        <p className="mb-4 flex-1 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
           {excerpt}
         </p>
         <div className="flex items-center justify-between">
@@ -85,7 +84,9 @@ export function ArticleCard({ item }: ArticleCardProps) {
           >
             {relativeDate}
           </time>
-          <CategoryBadge category={item.category} href={`/category/${slugify(item.category)}`} />
+          <span className="relative z-10">
+            <CategoryBadge category={item.category} href={`/category/${slugify(item.category)}`} />
+          </span>
         </div>
       </div>
     </article>

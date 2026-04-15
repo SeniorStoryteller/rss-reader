@@ -14,7 +14,7 @@ export function Sidebar({ categories }: SidebarProps) {
     <aside className="hidden w-56 shrink-0 md:block">
       <nav aria-label="Category navigation">
         <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-100 dark:text-gray-400">
-          Categories
+          Topics
         </h2>
         <ul className="space-y-1">
           <li>
@@ -27,7 +27,7 @@ export function Sidebar({ categories }: SidebarProps) {
                   : 'text-gray-100 hover:bg-gray-500 dark:text-gray-300 dark:hover:bg-gray-800'
               }`}
             >
-              All Feeds
+              All Topics
             </Link>
           </li>
           {categories.map((cat) => {

@@ -96,7 +96,7 @@ export function MobileNav({ categories }: MobileNavProps) {
             className="fixed inset-y-0 left-0 z-50 w-64 bg-white p-6 shadow-lg dark:bg-gray-800"
           >
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">Categories</h2>
+              <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">Topics</h2>
               <button
                 onClick={close}
                 aria-label="Close navigation menu"
@@ -119,7 +119,7 @@ export function MobileNav({ categories }: MobileNavProps) {
                       : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
                   }`}
                 >
-                  All Feeds
+                  All Topics
                 </Link>
               </li>
               {categories.map((cat) => {

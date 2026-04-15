@@ -38,9 +38,9 @@ export function ArticleCard({ item }: ArticleCardProps) {
       : 'Unknown date';
 
   return (
-    <article className="relative flex flex-row overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow duration-150 hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
+    <article className="relative flex h-[220px] flex-row overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow duration-150 hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
       {/* Left image panel — 1/3 width, full card height */}
-      <div className="w-1/3 shrink-0 self-stretch bg-black">
+      <div className="w-1/3 shrink-0 bg-black">
         {item.imageUrl ? (
           <img
             src={item.imageUrl}
@@ -65,9 +65,9 @@ export function ArticleCard({ item }: ArticleCardProps) {
       </div>
 
       {/* Right content panel */}
-      <div className="flex flex-1 flex-col p-5">
+      <div className="flex flex-1 flex-col overflow-hidden p-5">
         <p className="mb-1 text-sm font-medium text-gray-500 dark:text-gray-400">{item.source}</p>
-        <h2 className="mb-2 text-2xl font-bold leading-snug text-gray-900 dark:text-gray-100">
+        <h2 className="mb-2 line-clamp-2 text-2xl font-bold leading-snug text-gray-900 dark:text-gray-100">
           <a
             href={item.link}
             target="_blank"

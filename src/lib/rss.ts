@@ -8,6 +8,8 @@ type CustomItem = {
   mediaThumbnail?: { $?: { url?: string } };
 };
 
+const MAX_ITEMS_PER_FEED = 20;
+
 const parser = new Parser<Record<string, never>, CustomItem>({
   customFields: {
     item: [
@@ -60,7 +62,7 @@ async function fetchSingleFeed(
     const cleanXml = stripXxeVectors(rawXml);
     const feed = await parser.parseString(cleanXml);
 
-    return (feed.items || []).map((item) => ({
+    return (feed.items || []).slice(0, MAX_ITEMS_PER_FEED).map((item) => ({
       title: item.title || 'Untitled',
       link: item.link || '',
       timestamp: parseDate(item.isoDate, item.pubDate),

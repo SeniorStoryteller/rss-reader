@@ -86,6 +86,7 @@ Currently configured:
 | Hard Fork | `Logo - Hard Fork.png` |
 | Practical AI | `Logo - Practical AI.webp` |
 | AI in Business | `Logo - AI in Business.png` |
+| Response Awareness Methodology | `Logo - Response Awareness Methodology.webp` |
 | OpenAI News | `Logo - OpenAI.jpg` (feed not currently active) |
 
 ## Caching & Rendering

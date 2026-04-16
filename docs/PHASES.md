@@ -246,3 +246,32 @@ YouTube provides RSS feeds at `https://www.youtube.com/feeds/videos.xml?channel_
 ### Deferred for a future session
 - **Search analytics** — user chose Vercel Web Analytics `track()` custom events in `SearchBar.tsx` (fire on settled queries ≥3 chars after debounce). Not built yet. See memory: `project_analytics.md`
 - **Reader-submitted feed suggestions** — discussed: a public form that fetches the feed, calls the Claude API to evaluate relevance/safety, and notifies the admin. Not built yet. Key considerations: SSRF protection on URL fetch, `ANTHROPIC_API_KEY` on Vercel, notification channel (email via Resend or GitHub issue)
+
+---
+
+## Mobile Layout & Logo Session ✅ Complete
+
+### Logo additions
+- **Response Awareness Methodology** — `public/Logo - Response Awareness Methodology.webp` added and mapped in `SOURCE_LOGOS` in `ArticleCard.tsx`
+
+### Mobile card layout overhaul
+Cards now use a **stacked layout on mobile** (full-width image banner above content) and the original horizontal layout on desktop (`sm:` breakpoint and up).
+
+**`ArticleCard.tsx` changes**
+- Article element: `flex-col` on mobile → `sm:flex-row sm:h-[220px]` on desktop (removed fixed height from mobile)
+- Image panel: `h-40 w-full shrink-0 bg-black` on mobile → `sm:h-full sm:w-1/3` on desktop
+- OG images (`item.imageUrl`): `object-cover` on mobile (fills banner edge-to-edge) → `sm:object-contain` on desktop (preserves existing letterbox behaviour)
+- Logos and source-name fallback panels: unchanged (centered in black panel at all sizes)
+- Headline: `text-lg sm:text-2xl` — full card width on mobile recovers space lost in the old narrow column
+- Description: `line-clamp-2 sm:line-clamp-3` — shows 2 lines on mobile, 3 on desktop
+- `flex-1` on description element pushes date/pill row to card bottom at all sizes regardless of content length
+
+**`SkeletonCard.tsx` changes**
+- Reshaped to match stacked layout: `flex-col sm:flex-row`, image panel `h-40 w-full sm:h-auto sm:w-1/3`
+
+### claude.com/blog RSS feed
+- `https://claude.com/blog` has no native RSS feed (no `<link rel="alternate">` tags; `/blog/rss.xml` and `/feed.xml` both 404)
+- Decision: use **RSS.app free tier** (scrape-to-RSS service, updates every few hours — acceptable for ~2 articles/day)
+- Setup deferred to next session; feed URL to be added via admin page once configured
+
+**Done when:** All of the above is committed to `main` and the live site reflects all changes.

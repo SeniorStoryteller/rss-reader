@@ -191,3 +191,58 @@ All logos live in `public/` and are mapped in `SOURCE_LOGOS` in `src/components/
 
 ### YouTube RSS note
 YouTube provides RSS feeds at `https://www.youtube.com/feeds/videos.xml?channel_id=CHANNEL_ID`. The channel ID (format: `UCxxxxxxxxx`) must be found by viewing the channel page source. YouTube feeds use Atom format — articles link correctly but images require either a logo entry in `SOURCE_LOGOS` or custom `media:group` thumbnail parsing in `src/lib/rss.ts`.
+
+---
+
+## Post-Phase 7 "All Things AI" Rebrand + Performance Session ✅ Complete
+
+### Branding
+- **Site renamed** to "All Things AI" — updated page titles, `<Head>` meta tags, OG tags, and page header (`h1` bumped from `text-xl` to `text-4xl`) across `index.tsx`, `category/[slug].tsx`, `404.tsx`, `500.tsx`, and `Layout.tsx`
+
+### Layout & navigation
+- **Search bar moved** from the header to the left sidebar (desktop) and MobileNav drawer (mobile). `Layout.tsx` passes search props to both `Sidebar.tsx` and `MobileNav.tsx`
+- **Sticky sidebar** — `sticky top-6 self-start` on the desktop aside, so topics stay visible while scrolling
+- **Active nav state redesigned** — replaced `bg-blue-50` fill with a left border accent (`border-l-2 border-orange-400 pl-[10px] font-semibold text-white`) to stop the active topic from looking like a form input
+
+### Card restructure (horizontal single-column)
+- `ArticleCard.tsx` — horizontal layout: `w-1/3 shrink-0 bg-black` image panel on left, content panel on right. Title bumped to `text-2xl font-bold` with `line-clamp-2`. Description rendered directly (no JS truncation) with `line-clamp-3`. Fixed card height `h-[220px]` with `overflow-hidden` to keep rows uniform
+- **Block link pattern** — the title `<a>` carries `after:absolute after:inset-0` so the entire card is clickable while the category pill sits above with `relative z-10`
+- **Image display** — `object-contain` on the `<img>` so wide OG images render fully with letterbox rather than being cropped mid-word. The black panel background fills the letterbox cleanly
+- **Relative dates** — `formatDisplayDate()` uses `date-fns` `differenceInHours` / `differenceInDays`: `Xh ago` → `Yesterday` → `2 days ago` → `EEE yyyy-MM-dd` for anything older
+- `SkeletonCard.tsx` — reshaped to match the horizontal layout so the loading state matches what lands
+- `index.tsx` / `category/[slug].tsx` — grid replaced with `flex flex-col gap-4` (single column, scrollable archive)
+
+### Feed management
+- **`MAX_ITEMS_PER_FEED = 20`** in `src/lib/rss.ts` — safeguard against archive floods. OpenAI's blog feed returned 937 items which is why the constant exists
+- **OpenAI News** added then removed (too high volume even with the cap). `Logo - OpenAI.jpg` and its `SOURCE_LOGOS` entry left in place for future use
+
+### Performance — first-load optimization
+- **ISR (Incremental Static Regeneration)** — `index.tsx` and `category/[slug].tsx` now use `getStaticProps` with `revalidate: 300`. `getStaticPaths` pre-renders all category slugs at build time. HTML arrives with feed data baked in, eliminating the client-side fetch waterfall. First-load went from 2–5 seconds (skeleton) to instant from CDN
+- **`FeedDataProvider` accepts optional `initialData`** — skips the client fetch when SSG data is provided. `_app.tsx` passes `pageProps.initialFeedData` through. Admin page (no `getStaticProps`) still client-fetches for the admin API
+- **jsdom + DOMPurify → `sanitize-html`** — removed ~200MB of server dependencies. `sanitize-html` is a drop-in replacement with equivalent tag/attribute/scheme policies and the same non-HTTPS `src` stripping. Major cold-start win on Vercel
+- `rss.ts` now conditionally spreads `imageUrl` (omits the key when absent) so `getStaticProps` can serialize to JSON — `undefined` breaks SSG serialization
+
+### Current feed list (16 feeds)
+
+| Name | Category |
+|---|---|
+| How to AI | Claude Code |
+| Michael Crist | Claude Code |
+| Senior Storyteller | Claude Code |
+| Claude Skill of the Week | Claude Skills |
+| Response Awareness Methodology | Claude Skills |
+| Wyndo | AI Automation |
+| Automato | AI Automation |
+| One Useful Thing | AI & Work |
+| Future-Proof Your Career with AI | AI & Work |
+| Lenny's Podcast | Product & Strategy |
+| Hard Fork | Product & Strategy |
+| The AI Daily Brief | Product & Strategy |
+| Practical AI | Product & Strategy |
+| AI in Business | Product & Strategy |
+| Gary Marcus | AI Critique |
+| Yes, And Also No | AI Critique |
+
+### Deferred for a future session
+- **Search analytics** — user chose Vercel Web Analytics `track()` custom events in `SearchBar.tsx` (fire on settled queries ≥3 chars after debounce). Not built yet. See memory: `project_analytics.md`
+- **Reader-submitted feed suggestions** — discussed: a public form that fetches the feed, calls the Claude API to evaluate relevance/safety, and notifies the admin. Not built yet. Key considerations: SSRF protection on URL fetch, `ANTHROPIC_API_KEY` on Vercel, notification channel (email via Resend or GitHub issue)

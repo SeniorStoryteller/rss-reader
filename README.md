@@ -1,8 +1,10 @@
-# RSS Reader
+# All Things AI
 
-A modern, publicly accessible RSS feed reader built with Next.js and deployed on Vercel. Feed URLs are managed in a local config file and pushed to GitHub. The app is read-only and public — no authentication, no write operations from the public-facing side.
+A curated RSS feed reader built with Next.js and deployed on Vercel. Feed URLs are managed in a local config file and pushed to GitHub. The app is read-only and public — no authentication, no write operations from the public-facing side.
 
 **Production URL:** `https://rss-reader-three-omega.vercel.app`
+
+The repo name is still `rss-reader` for historical reasons; the site itself is branded "All Things AI".
 
 ## Tech Stack
 
@@ -84,10 +86,21 @@ Currently configured:
 | Hard Fork | `Logo - Hard Fork.png` |
 | Practical AI | `Logo - Practical AI.webp` |
 | AI in Business | `Logo - AI in Business.png` |
+| OpenAI News | `Logo - OpenAI.jpg` (feed not currently active) |
 
-## Caching
+## Caching & Rendering
 
-The feeds API uses `s-maxage=300` — the CDN caches feed content for up to 5 minutes. New feeds and new articles from existing feeds will appear on the live site within 5 minutes of a push, with no manual action needed.
+The home page and category pages use **Incremental Static Regeneration (ISR)** with `revalidate: 300`. Pages are pre-rendered at build time with feed data baked into the HTML, then regenerated every 5 minutes in the background. First-byte is served instantly from Vercel's CDN — no client-side fetch waterfall.
+
+The `/api/feeds` endpoint (still used by the admin page and as a fallback) uses `s-maxage=300` with an in-memory 60-second dedup cache.
+
+### Feed item cap
+
+Each feed is capped at 20 items (`MAX_ITEMS_PER_FEED` in `src/lib/rss.ts`). This prevents high-volume archives from dominating the combined feed — OpenAI's blog RSS, for example, returns 900+ items in a single fetch.
+
+### HTML sanitization
+
+Feed descriptions pass through `sanitize-html` with a strict tag/attribute allowlist. Non-HTTPS `src` attributes on images are stripped.
 
 ## Merge Workflow
 

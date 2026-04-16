@@ -11,6 +11,7 @@ const SOURCE_LOGOS: Record<string, string> = {
   "Practical AI": '/Logo%20-%20Practical%20AI.webp',
   "AI in Business": '/Logo%20-%20AI%20in%20Business.png',
   "OpenAI News": '/Logo%20-%20OpenAI.jpg',
+  "Response Awareness Methodology": '/Logo%20-%20Response%20Awareness%20Methodology.webp',
 };
 
 interface ArticleCardProps {

@@ -69,7 +69,7 @@ export function ArticleCard({ item }: ArticleCardProps) {
       {/* Right content panel */}
       <div className="flex flex-1 flex-col overflow-hidden p-5">
         <p className="mb-1 text-sm font-medium text-gray-500 dark:text-gray-400">{item.source}</p>
-        <h2 className="mb-2 line-clamp-2 text-2xl font-bold leading-snug text-gray-900 dark:text-gray-100">
+        <h2 className="mb-2 line-clamp-2 text-lg sm:text-2xl font-bold leading-snug text-gray-900 dark:text-gray-100">
           <a
             href={item.link}
             target="_blank"
@@ -79,7 +79,7 @@ export function ArticleCard({ item }: ArticleCardProps) {
             {item.title}
           </a>
         </h2>
-        <p className="mb-4 line-clamp-3 flex-1 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+        <p className="hidden sm:block mb-4 line-clamp-3 flex-1 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
           {item.description}
         </p>
         <div className="flex items-center justify-between">

@@ -79,7 +79,7 @@ export function ArticleCard({ item }: ArticleCardProps) {
             {item.title}
           </a>
         </h2>
-        <p className="hidden sm:block mb-4 line-clamp-3 flex-1 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+        <p className="mb-4 line-clamp-1 sm:line-clamp-3 flex-1 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
           {item.description}
         </p>
         <div className="flex items-center justify-between">

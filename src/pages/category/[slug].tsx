@@ -20,17 +20,16 @@ export default function CategoryPage() {
 
   const { items, failed, loading, categories, sources } = useFeedData();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedSource, setSelectedSource] = useState<string | null>(null);
 
   const categoryName = categories.find((cat) => slugify(cat) === slug);
   const filteredItems = useMemo(
     () => items.filter((item) => slugify(item.category) === slug),
     [items, slug]
   );
-  const displayedItems = useMemo(() => {
-    const sourceFiltered = selectedSource ? filteredItems.filter((item) => item.source === selectedSource) : filteredItems;
-    return filterBySearch(sourceFiltered, searchQuery);
-  }, [filteredItems, searchQuery, selectedSource]);
+  const displayedItems = useMemo(
+    () => filterBySearch(filteredItems, searchQuery),
+    [filteredItems, searchQuery]
+  );
 
   if (!loading && !categoryName) {
     return (
@@ -46,8 +45,6 @@ export default function CategoryPage() {
         <Layout
           categories={categories}
           sources={sources}
-          selectedSource={selectedSource}
-          onSourceSelect={setSelectedSource}
           searchQuery=""
           onSearchChange={() => {}}
           searchResultCount={0}
@@ -99,8 +96,6 @@ export default function CategoryPage() {
       <Layout
         categories={categories}
         sources={sources}
-        selectedSource={selectedSource}
-        onSourceSelect={setSelectedSource}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         searchResultCount={displayedItems.length}

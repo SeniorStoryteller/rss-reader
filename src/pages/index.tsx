@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import type { GetStaticProps } from 'next';
+import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { ArticleCard } from '@/components/ArticleCard';
 import { SkeletonCard } from '@/components/SkeletonCard';
@@ -12,9 +13,11 @@ import { fetchAllFeeds } from '@/lib/rss';
 import type { FeedApiResponse } from '@/lib/types';
 
 export default function Home() {
+  const router = useRouter();
   const { items, failed, loading, categories, sources } = useFeedData();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedSource, setSelectedSource] = useState<string | null>(null);
+
+  const selectedSource = typeof router.query.source === 'string' ? router.query.source : null;
 
   const displayedItems = useMemo(() => {
     const sourceFiltered = selectedSource ? items.filter((item) => item.source === selectedSource) : items;
@@ -37,8 +40,6 @@ export default function Home() {
       <Layout
         categories={categories}
         sources={sources}
-        selectedSource={selectedSource}
-        onSourceSelect={setSelectedSource}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         searchResultCount={displayedItems.length}
@@ -64,7 +65,7 @@ export default function Home() {
         ) : (
           <p className="py-12 text-center text-gray-500 dark:text-gray-400">
             {selectedSource
-              ? `No items from "${selectedSource}". Debug: ${items.length} items loaded, ${items.filter((i) => i.source === selectedSource).length} match. Available sources: ${sources.slice(0, 5).join(', ')}...`
+              ? `No articles from "${selectedSource}".`
               : searchQuery
                 ? 'No results found.'
                 : 'No feed items available.'}

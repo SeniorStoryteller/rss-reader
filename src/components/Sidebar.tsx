@@ -7,16 +7,15 @@ import { SearchBar } from './SearchBar';
 interface SidebarProps {
   categories: string[];
   sources: string[];
-  selectedSource: string | null;
-  onSourceSelect: (source: string | null) => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
   searchResultCount: number;
 }
 
-export function Sidebar({ categories, sources, selectedSource, onSourceSelect, searchQuery, onSearchChange, searchResultCount }: SidebarProps) {
+export function Sidebar({ categories, sources, searchQuery, onSearchChange, searchResultCount }: SidebarProps) {
   const router = useRouter();
   const currentSlug = router.query.slug as string | undefined;
+  const currentSource = typeof router.query.source === 'string' ? router.query.source : null;
   const [activeTab, setActiveTab] = useState<'topics' | 'sources'>('topics');
 
   return (
@@ -25,6 +24,7 @@ export function Sidebar({ categories, sources, selectedSource, onSourceSelect, s
         {/* Tab switcher */}
         <div className="mb-3 flex items-center gap-1 text-xs font-semibold uppercase tracking-wider">
           <button
+            type="button"
             onClick={() => setActiveTab('topics')}
             className={`focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
               activeTab === 'topics' ? 'font-bold text-white' : 'font-medium text-gray-400 hover:text-gray-200'
@@ -34,6 +34,7 @@ export function Sidebar({ categories, sources, selectedSource, onSourceSelect, s
           </button>
           <span className="text-gray-500">|</span>
           <button
+            type="button"
             onClick={() => setActiveTab('sources')}
             className={`focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
               activeTab === 'sources' ? 'font-bold text-white' : 'font-medium text-gray-400 hover:text-gray-200'
@@ -81,21 +82,20 @@ export function Sidebar({ categories, sources, selectedSource, onSourceSelect, s
         ) : (
           <ul>
             {sources.map((source) => {
-              const isActive = selectedSource === source;
+              const isActive = currentSource === source;
               return (
                 <li key={source}>
-                  <button
-                    type="button"
-                    onClick={() => onSourceSelect(isActive ? null : source)}
-                    aria-pressed={isActive}
-                    className={`w-full text-left rounded-md px-3 py-1.5 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
+                  <Link
+                    href={isActive ? '/' : { pathname: '/', query: { source } }}
+                    aria-current={isActive ? 'page' : undefined}
+                    className={`block w-full text-left rounded-md px-3 py-1.5 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
                       isActive
                         ? 'border-l-2 border-orange-400 pl-[10px] font-semibold text-white'
                         : 'text-gray-100 hover:bg-gray-500 dark:text-gray-300 dark:hover:bg-gray-800'
                     }`}
                   >
                     {source}
-                  </button>
+                  </Link>
                 </li>
               );
             })}

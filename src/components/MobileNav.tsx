@@ -7,18 +7,17 @@ import { SearchBar } from './SearchBar';
 interface MobileNavProps {
   categories: string[];
   sources: string[];
-  selectedSource: string | null;
-  onSourceSelect: (source: string | null) => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
   searchResultCount: number;
 }
 
-export function MobileNav({ categories, sources, selectedSource, onSourceSelect, searchQuery, onSearchChange, searchResultCount }: MobileNavProps) {
+export function MobileNav({ categories, sources, searchQuery, onSearchChange, searchResultCount }: MobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'topics' | 'sources'>('topics');
   const router = useRouter();
   const currentSlug = router.query.slug as string | undefined;
+  const currentSource = typeof router.query.source === 'string' ? router.query.source : null;
   const navRef = useRef<HTMLElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -175,21 +174,21 @@ export function MobileNav({ categories, sources, selectedSource, onSourceSelect,
             ) : (
               <ul>
                 {sources.map((source) => {
-                  const isActive = selectedSource === source;
+                  const isActive = currentSource === source;
                   return (
                     <li key={source}>
-                      <button
-                        type="button"
-                        onClick={() => { onSourceSelect(isActive ? null : source); close(); }}
-                        aria-pressed={isActive}
-                        className={`w-full text-left rounded-md px-3 py-1.5 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
+                      <Link
+                        href={isActive ? '/' : { pathname: '/', query: { source } }}
+                        onClick={close}
+                        aria-current={isActive ? 'page' : undefined}
+                        className={`block w-full text-left rounded-md px-3 py-1.5 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
                           isActive
                             ? 'border-l-2 border-orange-400 pl-[10px] font-semibold text-gray-900 dark:text-gray-100'
                             : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
                         }`}
                       >
                         {source}
-                      </button>
+                      </Link>
                     </li>
                   );
                 })}

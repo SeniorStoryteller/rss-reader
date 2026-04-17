@@ -63,7 +63,11 @@ export default function Home() {
           </div>
         ) : (
           <p className="py-12 text-center text-gray-500 dark:text-gray-400">
-            {searchQuery ? 'No results found.' : 'No feed items available.'}
+            {selectedSource
+              ? `No items from "${selectedSource}". Debug: ${items.length} items loaded, ${items.filter((i) => i.source === selectedSource).length} match. Available sources: ${sources.slice(0, 5).join(', ')}...`
+              : searchQuery
+                ? 'No results found.'
+                : 'No feed items available.'}
           </p>
         )}
       </Layout>

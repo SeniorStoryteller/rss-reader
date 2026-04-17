@@ -275,3 +275,132 @@ Cards now use a **stacked layout on mobile** (full-width image banner above cont
 - Setup deferred to next session; feed URL to be added via admin page once configured
 
 **Done when:** All of the above is committed to `main` and the live site reflects all changes.
+
+---
+
+## Topics | Sources Tab Switcher + Source Filtering Session ✅ Complete
+
+### Claude | News feed (RSS.app)
+- `claude.com/blog` has no native RSS feed — RSS.app scrapes the page and generates one
+- The existing RSS.app feed URL was updated/replaced: `https://rss.app/feeds/PCOnqGyhHG6Es5RT.xml`
+- Feed images are inconsistent: RSS.app captures per-article JS-rendered images when available, falls back to the Claude OG logo otherwise. Accepted as-is (no fix applied)
+
+### Topics | Sources tab switcher
+
+**What was built**
+
+Both `Sidebar.tsx` and `MobileNav.tsx` gained a two-tab switcher at the top of the navigation panel:
+
+```
+TOPICS  |  SOURCES
+```
+
+- **Topics tab** — same category list as before (All Topics + each category slug)
+- **Sources tab** — one entry per unique feed source name, derived at runtime from the items returned by the feed API
+
+**How `sources` is derived**
+
+`useFeedData.ts` was extended to expose a `sources: string[]` array. It's computed in a `useMemo` from the live items:
+
+```ts
+const sources = useMemo(
+  () => Array.from(new Set(items.map((item) => item.source))),
+  [items]
+);
+```
+
+`Layout.tsx` receives `sources` as a prop and passes it down to both `Sidebar` and `MobileNav`.
+
+**Tab styling**
+
+```
+text-sm uppercase tracking-wider
+```
+
+- Active tab: `font-bold text-white` (Sidebar) / `font-bold text-gray-900 dark:text-gray-100` (MobileNav)
+- Inactive tab: `font-medium text-gray-200 hover:text-white` (Sidebar) / `font-medium text-gray-600 hover:text-gray-900` (MobileNav)
+
+A `|` separator in `text-gray-300` / `text-gray-400` sits between the two buttons.
+
+### Source filtering — URL-based approach
+
+**How it works**
+
+Clicking a source navigates to `/?source=<SourceName>` (or back to `/` if the source is already active). Filtering always happens on the home page — source filter is incompatible with category pages.
+
+```tsx
+// In Sidebar.tsx / MobileNav.tsx
+<Link
+  href={isActive ? '/' : { pathname: '/', query: { source } }}
+  aria-current={isActive ? 'page' : undefined}
+>
+  {source}
+</Link>
+```
+
+In `index.tsx`, the source param drives the displayed items:
+
+```ts
+const selectedSource = typeof router.query.source === 'string' ? router.query.source : null;
+const displayedItems = useMemo(() => {
+  const sourceFiltered = selectedSource
+    ? items.filter((item) => item.source === selectedSource)
+    : items;
+  return filterBySearch(sourceFiltered, searchQuery);
+}, [items, searchQuery, selectedSource]);
+```
+
+Active source is indicated by a left-border accent (matching the Topics active style):
+
+```
+border-l-2 border-orange-400 pl-[10px] font-semibold text-white
+```
+
+**Why URL-based (not local state)**
+
+Earlier iterations used `onClick` handlers and local state to filter sources inline. This caused two problems:
+
+1. **Zero results on category pages** — source filtering was applied inside the category filter, so `items.filter(category).filter(source)` returned nothing unless the source had articles in that category
+2. **Tab resetting after navigation** — when the user clicked a source link and React re-mounted the Sidebar (new page), `activeTab` local state reset to `'topics'`
+
+The URL approach solves both: the filter always runs on the full item list on the home page, and `activeTab` is initialized from the URL so it persists across navigations:
+
+```ts
+const [activeTab, setActiveTab] = useState<'topics' | 'sources'>(
+  currentSource ? 'sources' : 'topics'
+);
+```
+
+### Feed changes this session
+
+| Action | Feed | Category |
+|---|---|---|
+| Removed | AI in Business | Product & Strategy |
+| Added | Claude \| News | Claude Code |
+| Added | The AI Marketing Generalist | AI & Work |
+
+**Reason for removal — AI in Business:** feed was unreliable (site failed to load ~50% of the time).
+
+### Current feed list (16 feeds)
+
+| Name | Category |
+|---|---|
+| How to AI | Claude Code |
+| Michael Crist | Claude Code |
+| Senior Storyteller | Claude Code |
+| Claude \| News | Claude Code |
+| Claude Skill of the Week | Claude Skills |
+| Response Awareness Methodology | Claude Skills |
+| Wyndo | AI Automation |
+| Automato | AI Automation |
+| One Useful Thing | AI & Work |
+| Future-Proof Your Career with AI | AI & Work |
+| The AI Marketing Generalist | AI & Work |
+| Lenny's Podcast | Product & Strategy |
+| Hard Fork | Product & Strategy |
+| The AI Daily Brief | Product & Strategy |
+| Practical AI | Product & Strategy |
+| Gary Marcus | AI Critique |
+| Yes, And Also No | AI Critique |
+
+**Done when:** All of the above is committed to the `preview` branch, pushed to Vercel, and the live site reflects all changes.

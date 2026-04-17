@@ -22,22 +22,22 @@ export function Sidebar({ categories, sources, searchQuery, onSearchChange, sear
     <aside className="hidden w-56 shrink-0 self-start sticky top-6 md:block">
       <nav aria-label="Category navigation">
         {/* Tab switcher */}
-        <div className="mb-3 flex items-center gap-1 text-xs font-semibold uppercase tracking-wider">
+        <div className="mb-3 flex items-center gap-2 text-sm uppercase tracking-wider">
           <button
             type="button"
             onClick={() => setActiveTab('topics')}
             className={`focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
-              activeTab === 'topics' ? 'font-bold text-white' : 'font-medium text-gray-400 hover:text-gray-200'
+              activeTab === 'topics' ? 'font-bold text-white' : 'font-medium text-gray-200 hover:text-white'
             }`}
           >
             Topics
           </button>
-          <span className="text-gray-500">|</span>
+          <span className="text-gray-300">|</span>
           <button
             type="button"
             onClick={() => setActiveTab('sources')}
             className={`focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
-              activeTab === 'sources' ? 'font-bold text-white' : 'font-medium text-gray-400 hover:text-gray-200'
+              activeTab === 'sources' ? 'font-bold text-white' : 'font-medium text-gray-200 hover:text-white'
             }`}
           >
             Sources

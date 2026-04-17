@@ -16,7 +16,7 @@ export function Sidebar({ categories, sources, searchQuery, onSearchChange, sear
   const router = useRouter();
   const currentSlug = router.query.slug as string | undefined;
   const currentSource = typeof router.query.source === 'string' ? router.query.source : null;
-  const [activeTab, setActiveTab] = useState<'topics' | 'sources'>('topics');
+  const [activeTab, setActiveTab] = useState<'topics' | 'sources'>(currentSource ? 'sources' : 'topics');
 
   return (
     <aside className="hidden w-56 shrink-0 self-start sticky top-6 md:block">

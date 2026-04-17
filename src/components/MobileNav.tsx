@@ -107,7 +107,10 @@ export function MobileNav({ categories, sources, searchQuery, onSearchChange, se
               <div className="flex items-center gap-2 text-sm uppercase tracking-wider">
                 <button
                   type="button"
-                  onClick={() => setActiveTab('topics')}
+                  onClick={() => {
+                    setActiveTab('topics');
+                    if (currentSource) router.push('/');
+                  }}
                   className={`focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
                     activeTab === 'topics' ? 'font-bold text-gray-900 dark:text-gray-100' : 'font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100'
                   }`}

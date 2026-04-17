@@ -25,7 +25,10 @@ export function Sidebar({ categories, sources, searchQuery, onSearchChange, sear
         <div className="mb-3 flex items-center gap-2 text-sm uppercase tracking-wider">
           <button
             type="button"
-            onClick={() => setActiveTab('topics')}
+            onClick={() => {
+              setActiveTab('topics');
+              if (currentSource) router.push('/');
+            }}
             className={`focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
               activeTab === 'topics' ? 'font-bold text-white' : 'font-medium text-gray-200 hover:text-white'
             }`}

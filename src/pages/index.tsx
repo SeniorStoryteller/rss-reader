@@ -14,8 +14,12 @@ import type { FeedApiResponse } from '@/lib/types';
 export default function Home() {
   const { items, failed, loading, categories, sources } = useFeedData();
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedSource, setSelectedSource] = useState<string | null>(null);
 
-  const displayedItems = useMemo(() => filterBySearch(items, searchQuery), [items, searchQuery]);
+  const displayedItems = useMemo(() => {
+    const sourceFiltered = selectedSource ? items.filter((item) => item.source === selectedSource) : items;
+    return filterBySearch(sourceFiltered, searchQuery);
+  }, [items, searchQuery, selectedSource]);
 
   return (
     <>
@@ -33,6 +37,8 @@ export default function Home() {
       <Layout
         categories={categories}
         sources={sources}
+        selectedSource={selectedSource}
+        onSourceSelect={setSelectedSource}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         searchResultCount={displayedItems.length}

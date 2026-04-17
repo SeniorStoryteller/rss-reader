@@ -6,6 +6,8 @@ import { ThemeToggle } from './ThemeToggle';
 interface LayoutProps {
   categories: string[];
   sources: string[];
+  selectedSource: string | null;
+  onSourceSelect: (source: string | null) => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
   searchResultCount: number;
@@ -15,6 +17,8 @@ interface LayoutProps {
 export function Layout({
   categories,
   sources,
+  selectedSource,
+  onSourceSelect,
   searchQuery,
   onSearchChange,
   searchResultCount,
@@ -30,6 +34,8 @@ export function Layout({
             <MobileNav
               categories={categories}
               sources={sources}
+              selectedSource={selectedSource}
+              onSourceSelect={onSourceSelect}
               searchQuery={searchQuery}
               onSearchChange={onSearchChange}
               searchResultCount={searchResultCount}
@@ -42,6 +48,8 @@ export function Layout({
         <Sidebar
           categories={categories}
           sources={sources}
+          selectedSource={selectedSource}
+          onSourceSelect={onSourceSelect}
           searchQuery={searchQuery}
           onSearchChange={onSearchChange}
           searchResultCount={searchResultCount}

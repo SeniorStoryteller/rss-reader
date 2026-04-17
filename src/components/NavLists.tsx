@@ -37,9 +37,15 @@ export function NavLists({
       ? 'text-gray-100 hover:bg-gray-500 dark:text-gray-300 dark:hover:bg-gray-800'
       : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700';
 
-  const baseLinkClass =
-    'block min-h-[44px] rounded-md px-3 py-2.5 text-sm font-medium ' +
+  const focusClass =
     'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500';
+
+  // Topics keep a 44px min touch target; Sources use tighter spacing because
+  // the list is longer and denser reads better for scanning.
+  const topicLinkClass =
+    `block min-h-[44px] rounded-md px-3 py-2.5 text-sm font-medium ${focusClass}`;
+  const sourceLinkClass =
+    `block rounded-md px-3 py-1.5 text-sm font-medium ${focusClass}`;
 
   // "All Topics" is only active when neither a category slug nor a source filter is applied.
   const allTopicsActive = !currentSlug && !currentSource;
@@ -52,7 +58,7 @@ export function NavLists({
             href="/"
             onClick={onLinkClick}
             aria-current={allTopicsActive ? 'page' : undefined}
-            className={`${baseLinkClass} ${allTopicsActive ? activeClass : inactiveClass}`}
+            className={`${topicLinkClass} ${allTopicsActive ? activeClass : inactiveClass}`}
           >
             All Topics
           </Link>
@@ -66,7 +72,7 @@ export function NavLists({
                 href={`/category/${slug}`}
                 onClick={onLinkClick}
                 aria-current={isActive ? 'page' : undefined}
-                className={`${baseLinkClass} ${isActive ? activeClass : inactiveClass}`}
+                className={`${topicLinkClass} ${isActive ? activeClass : inactiveClass}`}
               >
                 {cat}
               </Link>
@@ -78,7 +84,7 @@ export function NavLists({
   }
 
   return (
-    <ul className="space-y-1">
+    <ul>
       {sources.map((source) => {
         const isActive = currentSource === source;
         return (
@@ -87,7 +93,7 @@ export function NavLists({
               href={isActive ? '/' : { pathname: '/', query: { source } }}
               onClick={onLinkClick}
               aria-current={isActive ? 'page' : undefined}
-              className={`${baseLinkClass} ${isActive ? activeClass : inactiveClass}`}
+              className={`${sourceLinkClass} ${isActive ? activeClass : inactiveClass}`}
             >
               {source}
             </Link>

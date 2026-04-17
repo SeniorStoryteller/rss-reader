@@ -12,7 +12,7 @@ import { fetchAllFeeds } from '@/lib/rss';
 import type { FeedApiResponse } from '@/lib/types';
 
 export default function Home() {
-  const { items, failed, loading, categories } = useFeedData();
+  const { items, failed, loading, categories, sources } = useFeedData();
   const [searchQuery, setSearchQuery] = useState('');
 
   const displayedItems = useMemo(() => filterBySearch(items, searchQuery), [items, searchQuery]);
@@ -32,6 +32,7 @@ export default function Home() {
 
       <Layout
         categories={categories}
+        sources={sources}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         searchResultCount={displayedItems.length}

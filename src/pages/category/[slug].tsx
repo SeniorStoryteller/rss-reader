@@ -18,7 +18,7 @@ export default function CategoryPage() {
   const router = useRouter();
   const { slug } = router.query;
 
-  const { items, failed, loading, categories } = useFeedData();
+  const { items, failed, loading, categories, sources } = useFeedData();
   const [searchQuery, setSearchQuery] = useState('');
 
   const categoryName = categories.find((cat) => slugify(cat) === slug);
@@ -44,6 +44,7 @@ export default function CategoryPage() {
 
         <Layout
           categories={categories}
+          sources={sources}
           searchQuery=""
           onSearchChange={() => {}}
           searchResultCount={0}
@@ -94,6 +95,7 @@ export default function CategoryPage() {
 
       <Layout
         categories={categories}
+        sources={sources}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         searchResultCount={displayedItems.length}

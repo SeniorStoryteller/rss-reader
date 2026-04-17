@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { slugify } from '@/lib/slugify';
 import { SearchBar } from './SearchBar';
+import { NavLists } from './NavLists';
 
 interface MobileNavProps {
   categories: string[];
@@ -20,6 +19,12 @@ export function MobileNav({ categories, sources, searchQuery, onSearchChange, se
   const [activeTab, setActiveTab] = useState<'topics' | 'sources'>(currentSource ? 'sources' : 'topics');
   const navRef = useRef<HTMLElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+
+  // Keep the visible tab in sync with the URL — handles browser back/forward
+  // and programmatic navigations that change `?source=` without remounting.
+  useEffect(() => {
+    setActiveTab(currentSource ? 'sources' : 'topics');
+  }, [currentSource]);
 
   const close = useCallback(() => {
     setIsOpen(false);
@@ -139,66 +144,16 @@ export function MobileNav({ categories, sources, searchQuery, onSearchChange, se
               </button>
             </div>
 
-            {activeTab === 'topics' ? (
-              <ul className="space-y-1">
-                <li>
-                  <Link
-                    href="/"
-                    onClick={close}
-                    aria-current={!currentSlug ? 'page' : undefined}
-                    className={`block min-h-[44px] rounded-md px-3 py-2.5 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
-                      !currentSlug
-                        ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'
-                        : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
-                    }`}
-                  >
-                    All Topics
-                  </Link>
-                </li>
-                {categories.map((cat) => {
-                  const slug = slugify(cat);
-                  const isActive = currentSlug === slug;
-                  return (
-                    <li key={cat}>
-                      <Link
-                        href={`/category/${slug}`}
-                        onClick={close}
-                        aria-current={isActive ? 'page' : undefined}
-                        className={`block min-h-[44px] rounded-md px-3 py-2.5 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
-                          isActive
-                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'
-                            : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
-                        }`}
-                      >
-                        {cat}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            ) : (
-              <ul>
-                {sources.map((source) => {
-                  const isActive = currentSource === source;
-                  return (
-                    <li key={source}>
-                      <Link
-                        href={isActive ? '/' : { pathname: '/', query: { source } }}
-                        onClick={close}
-                        aria-current={isActive ? 'page' : undefined}
-                        className={`block w-full text-left rounded-md px-3 py-1.5 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
-                          isActive
-                            ? 'border-l-2 border-orange-400 pl-[10px] font-semibold text-gray-900 dark:text-gray-100'
-                            : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
-                        }`}
-                      >
-                        {source}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
+            <NavLists
+              activeTab={activeTab}
+              categories={categories}
+              sources={sources}
+              currentSlug={currentSlug}
+              currentSource={currentSource}
+              onLinkClick={close}
+              variant="mobile"
+            />
+
             <div className="mt-4">
               <SearchBar value={searchQuery} onChange={onSearchChange} resultCount={searchResultCount} />
             </div>

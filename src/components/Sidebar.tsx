@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { slugify } from '@/lib/slugify';
 import { SearchBar } from './SearchBar';
+import { NavLists } from './NavLists';
 
 interface SidebarProps {
   categories: string[];
@@ -17,6 +17,12 @@ export function Sidebar({ categories, sources, searchQuery, onSearchChange, sear
   const currentSlug = router.query.slug as string | undefined;
   const currentSource = typeof router.query.source === 'string' ? router.query.source : null;
   const [activeTab, setActiveTab] = useState<'topics' | 'sources'>(currentSource ? 'sources' : 'topics');
+
+  // Keep the visible tab in sync with the URL — handles browser back/forward
+  // and programmatic navigations that change `?source=` without remounting.
+  useEffect(() => {
+    setActiveTab(currentSource ? 'sources' : 'topics');
+  }, [currentSource]);
 
   return (
     <aside className="hidden w-56 shrink-0 self-start sticky top-6 md:block">
@@ -47,63 +53,14 @@ export function Sidebar({ categories, sources, searchQuery, onSearchChange, sear
           </button>
         </div>
 
-        {activeTab === 'topics' ? (
-          <ul className="space-y-1">
-            <li>
-              <Link
-                href="/"
-                aria-current={!currentSlug ? 'page' : undefined}
-                className={`block min-h-[44px] rounded-md px-3 py-2.5 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
-                  !currentSlug
-                    ? 'border-l-2 border-orange-400 pl-[10px] font-semibold text-white'
-                    : 'text-gray-100 hover:bg-gray-500 dark:text-gray-300 dark:hover:bg-gray-800'
-                }`}
-              >
-                All Topics
-              </Link>
-            </li>
-            {categories.map((cat) => {
-              const slug = slugify(cat);
-              const isActive = currentSlug === slug;
-              return (
-                <li key={cat}>
-                  <Link
-                    href={`/category/${slug}`}
-                    aria-current={isActive ? 'page' : undefined}
-                    className={`block min-h-[44px] rounded-md px-3 py-2.5 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
-                      isActive
-                        ? 'border-l-2 border-orange-400 pl-[10px] font-semibold text-white'
-                        : 'text-gray-100 hover:bg-gray-500 dark:text-gray-300 dark:hover:bg-gray-800'
-                    }`}
-                  >
-                    {cat}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        ) : (
-          <ul>
-            {sources.map((source) => {
-              const isActive = currentSource === source;
-              return (
-                <li key={source}>
-                  <Link
-                    href={isActive ? '/' : { pathname: '/', query: { source } }}
-                    aria-current={isActive ? 'page' : undefined}
-                    className={`block w-full text-left rounded-md px-3 py-1.5 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
-                      isActive
-                        ? 'border-l-2 border-orange-400 pl-[10px] font-semibold text-white'
-                        : 'text-gray-100 hover:bg-gray-500 dark:text-gray-300 dark:hover:bg-gray-800'
-                    }`}
-                  >
-                    {source}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        )}
+        <NavLists
+          activeTab={activeTab}
+          categories={categories}
+          sources={sources}
+          currentSlug={currentSlug}
+          currentSource={currentSource}
+          variant="sidebar"
+        />
       </nav>
 
       <div className="mt-4">

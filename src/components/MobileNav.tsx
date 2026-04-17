@@ -179,6 +179,7 @@ export function MobileNav({ categories, sources, selectedSource, onSourceSelect,
                   return (
                     <li key={source}>
                       <button
+                        type="button"
                         onClick={() => { onSourceSelect(isActive ? null : source); close(); }}
                         aria-pressed={isActive}
                         className={`w-full text-left rounded-md px-3 py-1.5 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${

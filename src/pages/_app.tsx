@@ -1,4 +1,5 @@
 import type { AppProps } from 'next/app';
+import { Analytics } from '@vercel/analytics/next';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { FeedDataProvider } from '@/hooks/useFeedData';
 import '@/styles/globals.css';
@@ -17,6 +18,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         </FeedDataProvider>
       </ErrorBoundary>
+      <Analytics />
     </>
   );
 }

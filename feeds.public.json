@@ -78,5 +78,10 @@
     "name": "9x",
     "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCKtumk72QC3XBb_VWSMQAHg",
     "category": "AI Automation"
+  },
+  {
+    "name": "DIGITAL STORM weekly",
+    "url": "https://drstorm.substack.com/feed",
+    "category": "AI & Work"
   }
 ]

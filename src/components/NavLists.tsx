@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { track } from '@vercel/analytics';
 import { slugify } from '@/lib/slugify';
 
 interface NavListsProps {
@@ -56,7 +57,10 @@ export function NavLists({
         <li>
           <Link
             href="/"
-            onClick={onLinkClick}
+            onClick={() => {
+              track('topic_click', { topic: 'All Topics' });
+              onLinkClick?.();
+            }}
             aria-current={allTopicsActive ? 'page' : undefined}
             className={`${topicLinkClass} ${allTopicsActive ? activeClass : inactiveClass}`}
           >
@@ -70,7 +74,10 @@ export function NavLists({
             <li key={cat}>
               <Link
                 href={`/category/${slug}`}
-                onClick={onLinkClick}
+                onClick={() => {
+                  track('topic_click', { topic: cat });
+                  onLinkClick?.();
+                }}
                 aria-current={isActive ? 'page' : undefined}
                 className={`${topicLinkClass} ${isActive ? activeClass : inactiveClass}`}
               >
@@ -91,7 +98,10 @@ export function NavLists({
           <li key={source}>
             <Link
               href={isActive ? '/' : { pathname: '/', query: { source } }}
-              onClick={onLinkClick}
+              onClick={() => {
+                track('source_click', { source, cleared: isActive });
+                onLinkClick?.();
+              }}
               aria-current={isActive ? 'page' : undefined}
               className={`${sourceLinkClass} ${isActive ? activeClass : inactiveClass}`}
             >

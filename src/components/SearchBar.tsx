@@ -9,7 +9,7 @@ interface SearchBarProps {
 export function SearchBar({ value, onChange, resultCount }: SearchBarProps) {
   const [announced, setAnnounced] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);

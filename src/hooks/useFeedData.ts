@@ -48,7 +48,7 @@ export function FeedDataProvider({ children, initialData }: FeedDataProviderProp
     [items]
   );
 
-  return createElement(FeedDataContext.Provider, { value: { items, failed, loading, categories, sources } }, children);
+  return createElement(FeedDataContext, { value: { items, failed, loading, categories, sources } }, children);
 }
 
 export function useFeedData(): FeedData {

@@ -35,7 +35,10 @@ Otherwise: edit on main, commit, push.
 ## Long-lived branches
 
 - `main` — production. Vercel deploys from here.
-- `preview` — purpose unclear as of this writing. Investigate before deleting.
+
+## Branch protection
+
+`main` has a GitHub ruleset that blocks force-pushes and deletions. Direct pushes are still allowed — the ruleset is intentionally minimal so it doesn't conflict with the direct-push workflow above. Don't add a PR-required rule without revisiting that workflow.
 
 ## Validation
 

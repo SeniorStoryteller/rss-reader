@@ -93,5 +93,10 @@
     "name": "Blockbuster Blueprint",
     "url": "https://blockbuster.thoughtleader.school/feed",
     "category": "AI & Work"
+  },
+  {
+    "name": "Adam Danyal",
+    "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCtASL77th5xpFtfiOPrMZHA",
+    "category": "AI in Business"
   }
 ]

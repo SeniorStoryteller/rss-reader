@@ -1,6 +1,7 @@
 import Parser from 'rss-parser';
 import { sanitizeHtml } from './sanitize';
 import { parseDate } from './dates';
+import { readCache, writeCache, type FeedCache } from './feedCache';
 import type { FeedConfig, FeedItem, FailedFeed } from './types';
 
 type CustomItem = {
@@ -12,6 +13,7 @@ const MAX_ITEMS_PER_FEED = 20;
 const FETCH_TIMEOUT_MS = 5000;
 const MAX_ATTEMPTS = 2;
 const RETRY_DELAY_MS = 300; // base; jittered up to +1000ms in fetchFeedXml
+const CACHE_STALE_MS = 6 * 60 * 60 * 1000; // 6 hours
 
 // YouTube and some other feed hosts behave inconsistently with no User-Agent
 // (random 4xx/5xx). Sending a browser-like UA + a single retry absorbs most
@@ -124,25 +126,44 @@ async function fetchSingleFeed(
 export async function fetchAllFeeds(
   configs: FeedConfig[]
 ): Promise<{ items: FeedItem[]; failed: FailedFeed[] }> {
+  const cache = await readCache();
+  const now = Date.now();
+
   const results = await Promise.allSettled(
     configs.map((config) => fetchSingleFeed(config))
   );
 
   const items: FeedItem[] = [];
   const failed: FailedFeed[] = [];
+  const newCache: FeedCache = { feeds: {} };
 
   results.forEach((result, i) => {
+    const config = configs[i];
     if (result.status === 'fulfilled') {
       items.push(...result.value);
+      newCache.feeds[config.name] = { fetchedAt: now, items: result.value };
     } else {
-      failed.push({
-        name: configs[i].name,
-        reason: result.reason?.message || 'Unknown error',
-      });
+      // Fresh fetch failed — try cache fallback.
+      const cached = cache.feeds[config.name];
+      if (cached && now - cached.fetchedAt < CACHE_STALE_MS) {
+        items.push(...cached.items);
+        // Preserve the cache entry so subsequent failed fetches can keep
+        // using it until it goes stale.
+        newCache.feeds[config.name] = cached;
+      } else {
+        failed.push({
+          name: config.name,
+          reason: result.reason?.message || 'Unknown error',
+        });
+      }
     }
   });
 
   items.sort((a, b) => b.timestamp - a.timestamp);
+
+  // Block on cache write so the data persists before the function returns.
+  // Vercel functions may not finish detached promises after response.
+  await writeCache(newCache);
 
   return { items, failed };
 }

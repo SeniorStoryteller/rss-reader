@@ -11,7 +11,7 @@ type CustomItem = {
 const MAX_ITEMS_PER_FEED = 20;
 const FETCH_TIMEOUT_MS = 5000;
 const MAX_ATTEMPTS = 2;
-const RETRY_DELAY_MS = 500;
+const RETRY_DELAY_MS = 300; // base; jittered up to +1000ms in fetchFeedXml
 
 // YouTube and some other feed hosts behave inconsistently with no User-Agent
 // (random 4xx/5xx). Sending a browser-like UA + a single retry absorbs most
@@ -59,6 +59,14 @@ function stripXxeVectors(xml: string): string {
     .replace(/<!ENTITY[^>]*>/gi, '');
 }
 
+// A 4xx from an upstream like YouTube is not "try again" — it's
+// "we're rate-limiting/blocking you." Only retry on 5xx and network errors.
+function isRetryable(err: Error): boolean {
+  const msg = err.message;
+  if (msg.startsWith('HTTP 4')) return false; // any 4xx
+  return true; // 5xx, AbortError, fetch errors, etc.
+}
+
 async function fetchFeedXml(url: string): Promise<string> {
   let lastError: Error | undefined;
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
@@ -75,8 +83,13 @@ async function fetchFeedXml(url: string): Promise<string> {
       return await response.text();
     } catch (err) {
       lastError = err instanceof Error ? err : new Error(String(err));
-      if (attempt < MAX_ATTEMPTS) {
-        await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+      if (attempt < MAX_ATTEMPTS && isRetryable(lastError)) {
+        // Jittered backoff: 300–1500ms. Same-IP near-simultaneous retries
+        // against IP-reputation blocks are useless; add real spread.
+        const jitter = RETRY_DELAY_MS + Math.floor(Math.random() * 1000);
+        await new Promise((resolve) => setTimeout(resolve, jitter));
+      } else {
+        break;
       }
     } finally {
       clearTimeout(timeout);

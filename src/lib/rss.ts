@@ -9,6 +9,18 @@ type CustomItem = {
 };
 
 const MAX_ITEMS_PER_FEED = 20;
+const FETCH_TIMEOUT_MS = 5000;
+const MAX_ATTEMPTS = 2;
+const RETRY_DELAY_MS = 500;
+
+// YouTube and some other feed hosts behave inconsistently with no User-Agent
+// (random 4xx/5xx). Sending a browser-like UA + a single retry absorbs most
+// of the noise without making them reliable.
+const FETCH_HEADERS = {
+  'User-Agent':
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  Accept: 'application/atom+xml, application/rss+xml, application/xml;q=0.9, */*;q=0.8',
+};
 
 const parser = new Parser<Record<string, never>, CustomItem>({
   customFields: {
@@ -47,38 +59,53 @@ function stripXxeVectors(xml: string): string {
     .replace(/<!ENTITY[^>]*>/gi, '');
 }
 
+async function fetchFeedXml(url: string): Promise<string> {
+  let lastError: Error | undefined;
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+    try {
+      const response = await fetch(url, {
+        signal: controller.signal,
+        headers: FETCH_HEADERS,
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status} ${response.statusText}`);
+      }
+      return await response.text();
+    } catch (err) {
+      lastError = err instanceof Error ? err : new Error(String(err));
+      if (attempt < MAX_ATTEMPTS) {
+        await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+      }
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+  throw lastError ?? new Error('Fetch failed');
+}
+
 async function fetchSingleFeed(
   config: FeedConfig
 ): Promise<FeedItem[]> {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 5000);
+  const rawXml = await fetchFeedXml(config.url);
+  const cleanXml = stripXxeVectors(rawXml);
+  const feed = await parser.parseString(cleanXml);
 
-  try {
-    const response = await fetch(config.url, { signal: controller.signal });
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status} ${response.statusText}`);
-    }
-    const rawXml = await response.text();
-    const cleanXml = stripXxeVectors(rawXml);
-    const feed = await parser.parseString(cleanXml);
-
-    return (feed.items || []).slice(0, MAX_ITEMS_PER_FEED).map((item) => {
-      const imageUrl = extractImageUrl(item);
-      return {
-        title: item.title || 'Untitled',
-        link: item.link || '',
-        timestamp: parseDate(item.isoDate, item.pubDate),
-        pubDate: item.isoDate || item.pubDate || '',
-        description: sanitizeHtml(item.contentSnippet || item.content || item.summary || ''),
-        source: config.name,
-        category: config.category,
-        guid: item.guid || item.link || '',
-        ...(imageUrl ? { imageUrl } : {}),
-      };
-    });
-  } finally {
-    clearTimeout(timeout);
-  }
+  return (feed.items || []).slice(0, MAX_ITEMS_PER_FEED).map((item) => {
+    const imageUrl = extractImageUrl(item);
+    return {
+      title: item.title || 'Untitled',
+      link: item.link || '',
+      timestamp: parseDate(item.isoDate, item.pubDate),
+      pubDate: item.isoDate || item.pubDate || '',
+      description: sanitizeHtml(item.contentSnippet || item.content || item.summary || ''),
+      source: config.name,
+      category: config.category,
+      guid: item.guid || item.link || '',
+      ...(imageUrl ? { imageUrl } : {}),
+    };
+  });
 }
 
 export async function fetchAllFeeds(

@@ -13,6 +13,7 @@ const SOURCE_LOGOS: Record<string, string> = {
   "OpenAI News": '/Logo%20-%20OpenAI.jpg',
   "Adam Danyal": '/Logo%20-%20Adam%20Danyal.png',
   "How I AI Podcast": '/Logo%20-%20Claire%20Vo%20How%20I%20AI.png',
+  "Jack Roberts": '/Logo%20-%20Jack%20Roberts.png',
 };
 
 interface ArticleCardProps {

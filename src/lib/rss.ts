@@ -13,7 +13,7 @@ const MAX_ITEMS_PER_FEED = 20;
 const FETCH_TIMEOUT_MS = 5000;
 const MAX_ATTEMPTS = 2;
 const RETRY_DELAY_MS = 300; // base; jittered up to +1000ms in fetchFeedXml
-const CACHE_STALE_MS = 6 * 60 * 60 * 1000; // 6 hours
+const CACHE_STALE_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 // YouTube and some other feed hosts behave inconsistently with no User-Agent
 // (random 4xx/5xx). Sending a browser-like UA + a single retry absorbs most

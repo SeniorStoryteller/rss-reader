@@ -22,10 +22,18 @@ export default async function handler(
     const configs = getFeeds();
     const data = await fetchAllFeeds(configs);
 
-    cachedResponse = data;
-    lastFetchTime = Date.now();
+    // Only memoize and CDN-cache fully successful responses. A response with
+    // failed feeds would otherwise stick around for 5 minutes (s-maxage) and
+    // 60s (in-memory dedup), poisoning later requests that could have
+    // succeeded.
+    if (data.failed.length === 0) {
+      cachedResponse = data;
+      lastFetchTime = Date.now();
+      res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate');
+    } else {
+      res.setHeader('Cache-Control', 'no-store');
+    }
 
-    res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate');
     return res.status(200).json(data);
   } catch (error) {
     return res.status(500).json({

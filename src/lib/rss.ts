@@ -147,10 +147,16 @@ export async function fetchAllFeeds(
       // Fresh fetch failed — try cache fallback.
       const cached = cache.feeds[config.name];
       if (cached && now - cached.fetchedAt < CACHE_STALE_MS) {
-        items.push(...cached.items);
+        // Cache entries written before `type` existed lack the field; backfill
+        // from the live config so they categorize into the right nav tab.
+        const cachedItems = cached.items.map((item) => ({
+          ...item,
+          type: item.type ?? config.type,
+        }));
+        items.push(...cachedItems);
         // Preserve the cache entry so subsequent failed fetches can keep
         // using it until it goes stale.
-        newCache.feeds[config.name] = cached;
+        newCache.feeds[config.name] = { ...cached, items: cachedItems };
       } else {
         failed.push({
           name: config.name,

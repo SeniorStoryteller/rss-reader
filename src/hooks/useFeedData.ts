@@ -55,7 +55,11 @@ export function FeedDataProvider({ children, initialData }: FeedDataProviderProp
   const media = useMemo(
     () =>
       Array.from(
-        new Set(items.filter((item) => item.type !== 'author').map((item) => item.source))
+        new Set(
+          items
+            .filter((item) => item.type === 'podcast' || item.type === 'video')
+            .map((item) => item.source)
+        )
       ).sort(),
     [items]
   );

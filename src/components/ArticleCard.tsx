@@ -16,6 +16,7 @@ const SOURCE_LOGOS: Record<string, string> = {
   "Jack Roberts": '/Logo%20-%20Jack%20Roberts.png',
   "Blockbuster Blueprint": '/Logo%20-%20Blockbuster%20Michael%20Simmons.png',
   "Austin Marchese": '/Logo%20-%20Austin%20Marchese.jpg',
+  "ICOR with Tom": '/Logo%20-%20ICOR%20with%20Tom.png',
 };
 
 interface ArticleCardProps {

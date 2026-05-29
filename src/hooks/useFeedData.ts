@@ -6,7 +6,8 @@ interface FeedData {
   failed: FailedFeed[];
   loading: boolean;
   categories: string[];
-  sources: string[];
+  authors: string[];
+  media: string[];
 }
 
 const FeedDataContext = createContext<FeedData | null>(null);
@@ -43,12 +44,23 @@ export function FeedDataProvider({ children, initialData }: FeedDataProviderProp
     [items]
   );
 
-  const sources = useMemo(
-    () => Array.from(new Set(items.map((item) => item.source))).sort(),
+  const authors = useMemo(
+    () =>
+      Array.from(
+        new Set(items.filter((item) => item.type === 'author').map((item) => item.source))
+      ).sort(),
     [items]
   );
 
-  return createElement(FeedDataContext, { value: { items, failed, loading, categories, sources } }, children);
+  const media = useMemo(
+    () =>
+      Array.from(
+        new Set(items.filter((item) => item.type !== 'author').map((item) => item.source))
+      ).sort(),
+    [items]
+  );
+
+  return createElement(FeedDataContext, { value: { items, failed, loading, categories, authors, media } }, children);
 }
 
 export function useFeedData(): FeedData {

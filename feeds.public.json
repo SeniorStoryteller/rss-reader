@@ -2,126 +2,151 @@
   {
     "name": "How to AI",
     "url": "https://ruben.substack.com/feed",
-    "category": "Claude Code"
+    "category": "Claude Code",
+    "type": "author"
   },
   {
     "name": "Michael Crist",
     "url": "https://michaelcrist.substack.com/feed",
-    "category": "Claude Code"
+    "category": "Claude Code",
+    "type": "author"
   },
   {
     "name": "Gary Marcus",
     "url": "https://garymarcus.substack.com/feed",
-    "category": "AI Critique"
+    "category": "AI Critique",
+    "type": "author"
   },
   {
     "name": "Yes, And Also No",
     "url": "https://rebeccabultsma.substack.com/feed",
-    "category": "AI Critique"
+    "category": "AI Critique",
+    "type": "author"
   },
   {
     "name": "Senior Storyteller",
     "url": "https://acommunityarchitect.substack.com/feed",
-    "category": "Claude Code"
+    "category": "Claude Code",
+    "type": "author"
   },
   {
     "name": "AI Maker",
     "url": "https://aimaker.substack.com/feed",
-    "category": "AI Automation"
+    "category": "AI Automation",
+    "type": "author"
   },
   {
     "name": "Lenny's Podcast",
     "url": "https://api.substack.com/feed/podcast/10845.rss",
-    "category": "Product & Strategy"
+    "category": "Product & Strategy",
+    "type": "podcast"
   },
   {
     "name": "Hard Fork",
     "url": "https://feeds.simplecast.com/l2i9YnTd",
-    "category": "Product & Strategy"
+    "category": "Product & Strategy",
+    "type": "podcast"
   },
   {
     "name": "The AI Daily Brief",
     "url": "https://anchor.fm/s/f7cac464/podcast/rss",
-    "category": "Product & Strategy"
+    "category": "Product & Strategy",
+    "type": "podcast"
   },
   {
     "name": "Practical AI",
     "url": "https://changelog.com/practicalai/feed",
-    "category": "Product & Strategy"
+    "category": "Product & Strategy",
+    "type": "podcast"
   },
   {
     "name": "Automato",
     "url": "https://automato.substack.com/feed",
-    "category": "AI Automation"
+    "category": "AI Automation",
+    "type": "author"
   },
   {
     "name": "One Useful Thing",
     "url": "https://www.oneusefulthing.org/feed",
-    "category": "AI & Work"
+    "category": "AI & Work",
+    "type": "author"
   },
   {
     "name": "Future-Proof Your Career with AI",
     "url": "https://khemaridh.substack.com/feed",
-    "category": "AI & Work"
+    "category": "AI & Work",
+    "type": "author"
   },
   {
     "name": "Claude Skill of the Week",
     "url": "https://newsletter.genesysgrowth.com/feed",
-    "category": "Claude Skills"
+    "category": "Claude Skills",
+    "type": "author"
   },
   {
     "name": "Marketing AI in Action",
     "url": "https://www.kieranflanagan.io/feed",
-    "category": "AI & Work"
+    "category": "AI & Work",
+    "type": "author"
   },
   {
     "name": "9x",
     "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCKtumk72QC3XBb_VWSMQAHg",
-    "category": "AI Automation"
+    "category": "AI Automation",
+    "type": "video"
   },
   {
     "name": "DIGITAL STORM weekly",
     "url": "https://drstorm.substack.com/feed",
-    "category": "AI & Work"
+    "category": "AI & Work",
+    "type": "author"
   },
   {
     "name": "Nano Thoughts",
     "url": "https://nanothoughts.substack.com/feed",
-    "category": "AI in Business"
+    "category": "AI in Business",
+    "type": "author"
   },
   {
     "name": "Blockbuster Blueprint",
     "url": "https://blockbuster.thoughtleader.school/feed",
-    "category": "AI & Work"
+    "category": "AI & Work",
+    "type": "author"
   },
   {
     "name": "Adam Danyal",
     "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCtASL77th5xpFtfiOPrMZHA",
-    "category": "AI in Business"
+    "category": "AI in Business",
+    "type": "video"
   },
   {
     "name": "Jack Roberts",
     "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCxVxcTULO9cFU6SB9qVaisQ",
-    "category": "AI Automation"
+    "category": "AI Automation",
+    "type": "video"
   },
   {
     "name": "Austin Marchese",
     "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCFeFVytEkT8kaqPCJZGFswg",
-    "category": "AI & Work"
+    "category": "AI & Work",
+    "type": "video"
   },
   {
     "name": "Limited Edition Jonathan",
     "url": "https://limitededitionjonathan.substack.com/feed",
-    "category": "AI Critique"
+    "category": "AI Critique",
+    "type": "author"
   },
   {
     "name": "How I AI Podcast",
     "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCRYY7IEbkHLH_ScJCu9eWDQ",
-    "category": "AI & Work"
+    "category": "AI & Work",
+    "type": "video"
   },
   {
     "name": "ICOR with Tom",
     "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UC8qxhdxV0U2NQ9vinFffDJQ",
-    "category": "AI Automation"
+    "category": "AI Automation",
+    "type": "video"
   }
 ]

@@ -6,23 +6,27 @@ import { NavLists } from './NavLists';
 
 interface SidebarProps {
   categories: string[];
-  sources: string[];
+  authors: string[];
+  media: string[];
   searchQuery: string;
   onSearchChange: (query: string) => void;
   searchResultCount: number;
 }
 
-export function Sidebar({ categories, sources, searchQuery, onSearchChange, searchResultCount }: SidebarProps) {
+export function Sidebar({ categories, authors, media, searchQuery, onSearchChange, searchResultCount }: SidebarProps) {
   const router = useRouter();
   const currentSlug = router.query.slug as string | undefined;
   const currentSource = typeof router.query.source === 'string' ? router.query.source : null;
-  const [activeTab, setActiveTab] = useState<'topics' | 'sources'>(currentSource ? 'sources' : 'topics');
+  const tabForSource = (source: string | null): 'topics' | 'authors' | 'media' =>
+    source ? (media.includes(source) ? 'media' : 'authors') : 'topics';
+  const [activeTab, setActiveTab] = useState<'topics' | 'authors' | 'media'>(tabForSource(currentSource));
 
   // Keep the visible tab in sync with the URL — handles browser back/forward
   // and programmatic navigations that change `?source=` without remounting.
   useEffect(() => {
-    setActiveTab(currentSource ? 'sources' : 'topics');
-  }, [currentSource]);
+    setActiveTab(tabForSource(currentSource));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentSource, media]);
 
   return (
     <aside className="hidden w-56 shrink-0 self-start sticky top-6 md:block">
@@ -44,19 +48,29 @@ export function Sidebar({ categories, sources, searchQuery, onSearchChange, sear
           <span className="text-gray-300">|</span>
           <button
             type="button"
-            onClick={() => setActiveTab('sources')}
+            onClick={() => setActiveTab('authors')}
             className={`focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
-              activeTab === 'sources' ? 'font-bold text-white' : 'font-medium text-gray-200 hover:text-white'
+              activeTab === 'authors' ? 'font-bold text-white' : 'font-medium text-gray-200 hover:text-white'
             }`}
           >
-            Sources
+            Authors
+          </button>
+          <span className="text-gray-300">|</span>
+          <button
+            type="button"
+            onClick={() => setActiveTab('media')}
+            className={`focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
+              activeTab === 'media' ? 'font-bold text-white' : 'font-medium text-gray-200 hover:text-white'
+            }`}
+          >
+            Media
           </button>
         </div>
 
         <NavLists
           activeTab={activeTab}
           categories={categories}
-          sources={sources}
+          sources={activeTab === 'media' ? media : authors}
           currentSlug={currentSlug}
           currentSource={currentSource}
           variant="sidebar"

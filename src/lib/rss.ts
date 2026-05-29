@@ -117,6 +117,7 @@ async function fetchSingleFeed(
       description: sanitizeHtml(item.contentSnippet || item.content || item.summary || ''),
       source: config.name,
       category: config.category,
+      type: config.type,
       guid: item.guid || item.link || '',
       ...(imageUrl ? { imageUrl } : {}),
     };

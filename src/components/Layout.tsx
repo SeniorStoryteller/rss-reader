@@ -5,7 +5,8 @@ import { ThemeToggle } from './ThemeToggle';
 
 interface LayoutProps {
   categories: string[];
-  sources: string[];
+  authors: string[];
+  media: string[];
   searchQuery: string;
   onSearchChange: (query: string) => void;
   searchResultCount: number;
@@ -14,7 +15,8 @@ interface LayoutProps {
 
 export function Layout({
   categories,
-  sources,
+  authors,
+  media,
   searchQuery,
   onSearchChange,
   searchResultCount,
@@ -29,7 +31,8 @@ export function Layout({
             <ThemeToggle />
             <MobileNav
               categories={categories}
-              sources={sources}
+              authors={authors}
+              media={media}
               searchQuery={searchQuery}
               onSearchChange={onSearchChange}
               searchResultCount={searchResultCount}
@@ -41,7 +44,8 @@ export function Layout({
       <div className="mx-auto flex max-w-7xl gap-8 px-4 py-6">
         <Sidebar
           categories={categories}
-          sources={sources}
+          authors={authors}
+          media={media}
           searchQuery={searchQuery}
           onSearchChange={onSearchChange}
           searchResultCount={searchResultCount}

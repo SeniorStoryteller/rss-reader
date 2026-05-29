@@ -14,7 +14,7 @@ import type { FeedApiResponse } from '@/lib/types';
 
 export default function Home() {
   const router = useRouter();
-  const { items, failed, loading, categories, sources } = useFeedData();
+  const { items, failed, loading, categories, authors, media } = useFeedData();
   const [searchQuery, setSearchQuery] = useState('');
 
   const selectedSource = typeof router.query.source === 'string' ? router.query.source : null;
@@ -39,7 +39,8 @@ export default function Home() {
 
       <Layout
         categories={categories}
-        sources={sources}
+        authors={authors}
+        media={media}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         searchResultCount={displayedItems.length}

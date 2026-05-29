@@ -3,8 +3,9 @@ import { track } from '@vercel/analytics';
 import { slugify } from '@/lib/slugify';
 
 interface NavListsProps {
-  activeTab: 'topics' | 'sources';
+  activeTab: 'topics' | 'authors' | 'media';
   categories: string[];
+  /** The source list to render when activeTab is 'authors' or 'media'. */
   sources: string[];
   currentSlug: string | undefined;
   currentSource: string | null;
@@ -15,9 +16,11 @@ interface NavListsProps {
 }
 
 /**
- * Shared Topics / Sources list rendering used by Sidebar (desktop) and
+ * Shared Topics / Authors / Media list rendering used by Sidebar (desktop) and
  * MobileNav (drawer). Handles the active-state highlight rules for both
  * topic filters (category pages) and source filters (`?source=` on home).
+ * Authors and Media render identical source-style lists — the parent passes
+ * the matching list via `sources`.
  */
 export function NavLists({
   activeTab,

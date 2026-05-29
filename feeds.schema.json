@@ -3,12 +3,13 @@
   "type": "array",
   "items": {
     "type": "object",
-    "required": ["name", "url", "category"],
+    "required": ["name", "url", "category", "type"],
     "additionalProperties": false,
     "properties": {
       "name": { "type": "string", "minLength": 1 },
       "url": { "type": "string", "pattern": "^https://" },
-      "category": { "type": "string", "minLength": 1 }
+      "category": { "type": "string", "minLength": 1 },
+      "type": { "enum": ["author", "podcast", "video"] }
     }
   }
 }

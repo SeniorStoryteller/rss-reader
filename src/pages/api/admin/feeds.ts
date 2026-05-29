@@ -5,6 +5,8 @@ import type { FeedConfig } from '@/lib/types';
 
 const FEEDS_PATH = resolve(process.cwd(), 'feeds.public.json');
 
+const FEED_TYPES = ['author', 'podcast', 'video'];
+
 function isValidFeedEntry(data: unknown): data is FeedConfig {
   return (
     typeof data === 'object' &&
@@ -14,7 +16,8 @@ function isValidFeedEntry(data: unknown): data is FeedConfig {
     typeof (data as Record<string, unknown>).url === 'string' &&
     ((data as Record<string, unknown>).url as string).startsWith('https://') &&
     typeof (data as Record<string, unknown>).category === 'string' &&
-    (data as Record<string, unknown>).category !== ''
+    (data as Record<string, unknown>).category !== '' &&
+    FEED_TYPES.includes((data as Record<string, unknown>).type as string)
   );
 }
 
@@ -44,7 +47,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(400).json({ error: 'Invalid feed entry. Requires name, url (https://), and category.' });
       }
       const feeds = readFeeds();
-      feeds.push({ name: entry.name, url: entry.url, category: entry.category });
+      feeds.push({ name: entry.name, url: entry.url, category: entry.category, type: entry.type });
       writeFeeds(feeds);
       return res.status(200).json(feeds);
     }
@@ -58,7 +61,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       if (index < 0 || index >= feeds.length) {
         return res.status(400).json({ error: 'Index out of bounds.' });
       }
-      feeds[index] = { name: feed.name, url: feed.url, category: feed.category };
+      feeds[index] = { name: feed.name, url: feed.url, category: feed.category, type: feed.type };
       writeFeeds(feeds);
       return res.status(200).json(feeds);
     }

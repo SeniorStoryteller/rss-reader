@@ -5,26 +5,30 @@ import { NavLists } from './NavLists';
 
 interface MobileNavProps {
   categories: string[];
-  sources: string[];
+  authors: string[];
+  media: string[];
   searchQuery: string;
   onSearchChange: (query: string) => void;
   searchResultCount: number;
 }
 
-export function MobileNav({ categories, sources, searchQuery, onSearchChange, searchResultCount }: MobileNavProps) {
+export function MobileNav({ categories, authors, media, searchQuery, onSearchChange, searchResultCount }: MobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const currentSlug = router.query.slug as string | undefined;
   const currentSource = typeof router.query.source === 'string' ? router.query.source : null;
-  const [activeTab, setActiveTab] = useState<'topics' | 'sources'>(currentSource ? 'sources' : 'topics');
+  const tabForSource = (source: string | null): 'topics' | 'authors' | 'media' =>
+    source ? (media.includes(source) ? 'media' : 'authors') : 'topics';
+  const [activeTab, setActiveTab] = useState<'topics' | 'authors' | 'media'>(tabForSource(currentSource));
   const navRef = useRef<HTMLElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   // Keep the visible tab in sync with the URL — handles browser back/forward
   // and programmatic navigations that change `?source=` without remounting.
   useEffect(() => {
-    setActiveTab(currentSource ? 'sources' : 'topics');
-  }, [currentSource]);
+    setActiveTab(tabForSource(currentSource));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentSource, media]);
 
   const close = useCallback(() => {
     setIsOpen(false);
@@ -125,12 +129,22 @@ export function MobileNav({ categories, sources, searchQuery, onSearchChange, se
                 <span className="text-gray-400">|</span>
                 <button
                   type="button"
-                  onClick={() => setActiveTab('sources')}
+                  onClick={() => setActiveTab('authors')}
                   className={`focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
-                    activeTab === 'sources' ? 'font-bold text-gray-900 dark:text-gray-100' : 'font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100'
+                    activeTab === 'authors' ? 'font-bold text-gray-900 dark:text-gray-100' : 'font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100'
                   }`}
                 >
-                  Sources
+                  Authors
+                </button>
+                <span className="text-gray-400">|</span>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('media')}
+                  className={`focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${
+                    activeTab === 'media' ? 'font-bold text-gray-900 dark:text-gray-100' : 'font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100'
+                  }`}
+                >
+                  Media
                 </button>
               </div>
               <button
@@ -147,7 +161,7 @@ export function MobileNav({ categories, sources, searchQuery, onSearchChange, se
             <NavLists
               activeTab={activeTab}
               categories={categories}
-              sources={sources}
+              sources={activeTab === 'media' ? media : authors}
               currentSlug={currentSlug}
               currentSource={currentSource}
               onLinkClick={close}

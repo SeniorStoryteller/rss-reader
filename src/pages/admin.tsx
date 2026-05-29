@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
 import type { GetServerSideProps } from 'next';
-import type { FeedConfig } from '@/lib/types';
+import type { FeedConfig, FeedType } from '@/lib/types';
+
+const FEED_TYPES: FeedType[] = ['author', 'podcast', 'video'];
 
 // Returned from getServerSideProps only in production
 interface NotAvailableProps {
@@ -21,12 +23,13 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
   return { props: {} };
 };
 
-const EMPTY_FORM: FeedConfig = { name: '', url: '', category: '' };
+const EMPTY_FORM: FeedConfig = { name: '', url: '', category: '', type: 'author' };
 
 function validateFeed(feed: FeedConfig): string | null {
   if (!feed.name.trim()) return 'Name is required.';
   if (!feed.url.startsWith('https://')) return 'URL must start with https://';
   if (!feed.category.trim()) return 'Category is required.';
+  if (!FEED_TYPES.includes(feed.type)) return 'Type is required.';
   return null;
 }
 
@@ -227,6 +230,7 @@ function AdminUI() {
                       <th className="px-4 py-2 text-left font-medium text-gray-700 dark:text-gray-300">Name</th>
                       <th className="px-4 py-2 text-left font-medium text-gray-700 dark:text-gray-300">URL</th>
                       <th className="px-4 py-2 text-left font-medium text-gray-700 dark:text-gray-300">Category</th>
+                      <th className="px-4 py-2 text-left font-medium text-gray-700 dark:text-gray-300">Type</th>
                       <th className="px-4 py-2 text-left font-medium text-gray-700 dark:text-gray-300">Actions</th>
                     </tr>
                   </thead>
@@ -234,7 +238,7 @@ function AdminUI() {
                     {feeds.map((feed, i) => (
                       <tr key={i}>
                         {editIndex === i ? (
-                          <td colSpan={4} className="px-4 py-3">
+                          <td colSpan={5} className="px-4 py-3">
                             <form onSubmit={(e) => void handleSaveEdit(e)} className="flex flex-wrap items-end gap-2">
                               <input
                                 value={editForm.name}
@@ -254,6 +258,17 @@ function AdminUI() {
                                 placeholder="Category"
                                 className="w-28 rounded border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
                               />
+                              <select
+                                value={editForm.type}
+                                onChange={(e) => setEditForm((f) => ({ ...f, type: e.target.value as FeedType }))}
+                                className="w-28 rounded border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                              >
+                                {FEED_TYPES.map((t) => (
+                                  <option key={t} value={t}>
+                                    {t}
+                                  </option>
+                                ))}
+                              </select>
                               <button
                                 type="submit"
                                 className="rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700"
@@ -279,6 +294,7 @@ function AdminUI() {
                               </a>
                             </td>
                             <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{feed.category}</td>
+                            <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{feed.type}</td>
                             <td className="px-4 py-3">
                               <div className="flex gap-2">
                                 <button
@@ -335,6 +351,20 @@ function AdminUI() {
                   placeholder="Tech"
                   className="w-32 rounded border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
                 />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Type</label>
+                <select
+                  value={addForm.type}
+                  onChange={(e) => setAddForm((f) => ({ ...f, type: e.target.value as FeedType }))}
+                  className="w-32 rounded border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                >
+                  {FEED_TYPES.map((t) => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
               </div>
               <button
                 type="submit"

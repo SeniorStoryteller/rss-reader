@@ -118,5 +118,10 @@
     "name": "How I AI Podcast",
     "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCRYY7IEbkHLH_ScJCu9eWDQ",
     "category": "AI & Work"
+  },
+  {
+    "name": "ICOR with Tom",
+    "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UC8qxhdxV0U2NQ9vinFffDJQ",
+    "category": "AI Automation"
   }
 ]

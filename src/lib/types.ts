@@ -5,6 +5,7 @@ export interface FeedConfig {
   url: string;
   category: string;
   type: FeedType;
+  optional?: boolean;
 }
 
 export interface FeedItem {

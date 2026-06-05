@@ -153,6 +153,7 @@
     "name": "Anthropic Twitter Feed",
     "url": "https://nitter.net/AnthropicAI/rss",
     "category": "AI & Work",
-    "type": "author"
+    "type": "author",
+    "optional": true
   }
 ]

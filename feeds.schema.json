@@ -9,7 +9,8 @@
       "name": { "type": "string", "minLength": 1 },
       "url": { "type": "string", "pattern": "^https://" },
       "category": { "type": "string", "minLength": 1 },
-      "type": { "enum": ["author", "podcast", "video"] }
+      "type": { "enum": ["author", "podcast", "video"] },
+      "optional": { "type": "boolean" }
     }
   }
 }

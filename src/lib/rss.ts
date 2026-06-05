@@ -157,7 +157,7 @@ export async function fetchAllFeeds(
         // Preserve the cache entry so subsequent failed fetches can keep
         // using it until it goes stale.
         newCache.feeds[config.name] = { ...cached, items: cachedItems };
-      } else {
+      } else if (!config.optional) {
         failed.push({
           name: config.name,
           reason: result.reason?.message || 'Unknown error',

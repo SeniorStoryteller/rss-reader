@@ -148,5 +148,11 @@
     "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UC8qxhdxV0U2NQ9vinFffDJQ",
     "category": "AI Automation",
     "type": "video"
+  },
+  {
+    "name": "Anthropic Twitter Feed",
+    "url": "https://nitter.net/AnthropicAI/rss",
+    "category": "AI & Work",
+    "type": "author"
   }
 ]

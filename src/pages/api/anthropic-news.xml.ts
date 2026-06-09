@@ -35,16 +35,17 @@ const MONTH_MAP: Record<string, number> = {
 };
 
 function innerText(html: string): string {
-  return html.replace(/<[^>]+>/g, ‘ ‘).replace(/\s+/g, ‘ ‘).trim();
+  return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
 function parseArticles(html: string): Article[] {
-  // Match each article anchor: <a href=”/news/slug” class=”...”>…content…</a>
+  // Match each article anchor.
   // Anthropic uses two card layouts:
-  //   Featured: <a href=”…”>TITLE TEXT<div class=”…date…”>DATE</div><p>DESC</p>
-  //   List:     <a href=”…”><time>DATE</time><span>CATEGORY</span><p>TITLE</p><p>DESC</p>
+  //   Featured hero:  <h2 class="...featuredTitle">TITLE</h2>
+  //   Featured grid:  <h4 class="...title">TITLE</h4> <p class="...body">DESC</p>
+  //   List items:     <span class="...title...">TITLE</span>
   const cardPattern =
-    /<a\s[^>]*href=”(\/news\/[a-z0-9][a-z0-9-]+)”[^>]*>([\s\S]{20,1200}?)<\/a>/g;
+    /<a\s[^>]*href="(\/news\/[a-z0-9][a-z0-9-]+)"[^>]*>([\s\S]{20,1200}?)<\/a>/g;
 
   const seen = new Set<string>();
   const articles: Article[] = [];
@@ -67,17 +68,17 @@ function parseArticles(html: string): Article[] {
     const year = parseInt(dateMatch[3], 10);
     const pubDate = new Date(Date.UTC(year, month, day)).toUTCString();
 
-    // --- Title + Description ---
-    // Featured hero:  <h2 class="...featuredTitle">TITLE</h2>
-    // Featured grid:  <h4 class="...title">TITLE</h4> <p class="...body">DESC</p>
-    // List items:     <span class="...title ...">TITLE</span> (no description element)
+    // --- Title ---
+    // Featured cards use <h2> or <h4>; list items use <span class="...title...">
     const headingMatch = body.match(/<h[24][^>]*>([\s\S]*?)<\/h[24]>/);
     const spanTitleMatch = body.match(/<span[^>]*__title[^>]*>([\s\S]*?)<\/span>/);
-    const pMatch = body.match(/<p[^>]*>([\s\S]*?)<\/p>/);
-
     const rawTitle = headingMatch ?? spanTitleMatch;
-    const title = rawTitle ? innerText(rawTitle[1]).trim() : slug.replace(/-/g, ‘ ‘);
+    const title = rawTitle ? innerText(rawTitle[1]).trim() : slug.replace(/-/g, ' ');
+
+    // --- Description ---
+    const pMatch = body.match(/<p[^>]*>([\s\S]*?)<\/p>/);
     const description = pMatch ? innerText(pMatch[1]).slice(0, 250).trim() : title;
+
     if (!title) continue;
 
     articles.push({ slug, title, description, pubDate, url: `https://www.anthropic.com${slug}` });

@@ -34,61 +34,53 @@ const MONTH_MAP: Record<string, number> = {
   Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11,
 };
 
-function parseArticles(html: string): Article[] {
-  // Strip tags for cleaner text extraction
-  const stripTags = (s: string) =>
-    s.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+function innerText(html: string): string {
+  return html.replace(/<[^>]+>/g, ‘ ‘).replace(/\s+/g, ‘ ‘).trim();
+}
 
-  // Each article card contains: slug href, title text, date, description
-  // Split the page into card-sized chunks by splitting on news hrefs
-  const cardPattern = /href="(\/news\/[a-z0-9][a-z0-9-]+)"/g;
-  const slugMatches = [...html.matchAll(cardPattern)];
+function parseArticles(html: string): Article[] {
+  // Match each article anchor: <a href=”/news/slug” class=”...”>…content…</a>
+  // Anthropic uses two card layouts:
+  //   Featured: <a href=”…”>TITLE TEXT<div class=”…date…”>DATE</div><p>DESC</p>
+  //   List:     <a href=”…”><time>DATE</time><span>CATEGORY</span><p>TITLE</p><p>DESC</p>
+  const cardPattern =
+    /<a\s[^>]*href=”(\/news\/[a-z0-9][a-z0-9-]+)”[^>]*>([\s\S]{20,1200}?)<\/a>/g;
 
   const seen = new Set<string>();
   const articles: Article[] = [];
 
-  for (let i = 0; i < slugMatches.length && articles.length < MAX_ITEMS; i++) {
-    const m = slugMatches[i];
+  for (const m of html.matchAll(cardPattern)) {
+    if (articles.length >= MAX_ITEMS) break;
     const slug = m[1];
     if (seen.has(slug)) continue;
     seen.add(slug);
 
-    // Grab ~800 chars of HTML after the slug href for context
-    const contextStart = m.index ?? 0;
-    const contextEnd = Math.min(html.length, contextStart + 1200);
-    const chunk = stripTags(html.slice(contextStart, contextEnd));
+    const body = m[2];
 
-    // Date: "Jun 9, 2026" or "May 28, 2026"
-    const dateMatch = chunk.match(
+    // --- Date ---
+    const dateMatch = body.match(
       /\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\w*\s+(\d{1,2}),?\s+(\d{4})\b/
     );
     if (!dateMatch) continue;
-
     const month = MONTH_MAP[dateMatch[1]];
     const day = parseInt(dateMatch[2], 10);
     const year = parseInt(dateMatch[3], 10);
     const pubDate = new Date(Date.UTC(year, month, day)).toUTCString();
 
-    // Title: usually the first substantial text segment after the slug
-    // Heuristic: first quoted/unquoted block of 10–120 chars before the date
-    const beforeDate = chunk.slice(0, chunk.indexOf(dateMatch[0]));
-    const titleMatch = beforeDate.match(
-      /([A-Z“‘][^.!?]{9,119}[^.!?\s])\s*$/
-    );
-    const title = titleMatch ? titleMatch[1].trim() : slug.replace(/-/g, ' ');
+    // --- Title + Description ---
+    // Featured hero:  <h2 class="...featuredTitle">TITLE</h2>
+    // Featured grid:  <h4 class="...title">TITLE</h4> <p class="...body">DESC</p>
+    // List items:     <span class="...title ...">TITLE</span> (no description element)
+    const headingMatch = body.match(/<h[24][^>]*>([\s\S]*?)<\/h[24]>/);
+    const spanTitleMatch = body.match(/<span[^>]*__title[^>]*>([\s\S]*?)<\/span>/);
+    const pMatch = body.match(/<p[^>]*>([\s\S]*?)<\/p>/);
 
-    // Description: text after the date (up to ~200 chars, before category word)
-    const afterDate = chunk.slice(chunk.indexOf(dateMatch[0]) + dateMatch[0].length);
-    const rawDesc = afterDate.replace(/^\s*(Announcements|Policy|Research|Product|News)\s*/i, '').trim();
-    const description = rawDesc.slice(0, 200).trim() || title;
+    const rawTitle = headingMatch ?? spanTitleMatch;
+    const title = rawTitle ? innerText(rawTitle[1]).trim() : slug.replace(/-/g, ‘ ‘);
+    const description = pMatch ? innerText(pMatch[1]).slice(0, 250).trim() : title;
+    if (!title) continue;
 
-    articles.push({
-      slug,
-      title,
-      description,
-      pubDate,
-      url: `https://www.anthropic.com${slug}`,
-    });
+    articles.push({ slug, title, description, pubDate, url: `https://www.anthropic.com${slug}` });
   }
 
   return articles.sort(

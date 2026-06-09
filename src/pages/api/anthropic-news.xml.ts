@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 const ANTHROPIC_NEWS_URL = 'https://www.anthropic.com/news';
 const FETCH_TIMEOUT_MS = 8000;
+const MAX_ITEMS = 20;
 const HEADERS = {
   'User-Agent':
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -28,51 +29,71 @@ async function fetchWithTimeout(url: string): Promise<string> {
   }
 }
 
-function extractSlugs(html: string): string[] {
-  const matches = html.matchAll(/href="(\/news\/[a-z0-9][a-z0-9-]+)"/g);
+const MONTH_MAP: Record<string, number> = {
+  Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
+  Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11,
+};
+
+function parseArticles(html: string): Article[] {
+  // Strip tags for cleaner text extraction
+  const stripTags = (s: string) =>
+    s.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+
+  // Each article card contains: slug href, title text, date, description
+  // Split the page into card-sized chunks by splitting on news hrefs
+  const cardPattern = /href="(\/news\/[a-z0-9][a-z0-9-]+)"/g;
+  const slugMatches = [...html.matchAll(cardPattern)];
+
   const seen = new Set<string>();
-  const slugs: string[] = [];
-  for (const m of matches) {
-    if (!seen.has(m[1])) {
-      seen.add(m[1]);
-      slugs.push(m[1]);
-    }
-  }
-  return slugs;
-}
+  const articles: Article[] = [];
 
-async function fetchArticleMeta(slug: string): Promise<Article | null> {
-  try {
-    const html = await fetchWithTimeout(`https://www.anthropic.com${slug}`);
+  for (let i = 0; i < slugMatches.length && articles.length < MAX_ITEMS; i++) {
+    const m = slugMatches[i];
+    const slug = m[1];
+    if (seen.has(slug)) continue;
+    seen.add(slug);
 
-    const titleMatch = html.match(/<title>([^<]+)<\/title>/);
-    const descMatch =
-      html.match(/og:description"\s+content="([^"]+)"/) ||
-      html.match(/name="description"\s+content="([^"]+)"/);
-    const dateMatch = html.match(
-      /\b(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+(\d{1,2}),?\s+(\d{4})\b/
+    // Grab ~800 chars of HTML after the slug href for context
+    const contextStart = m.index ?? 0;
+    const contextEnd = Math.min(html.length, contextStart + 1200);
+    const chunk = stripTags(html.slice(contextStart, contextEnd));
+
+    // Date: "Jun 9, 2026" or "May 28, 2026"
+    const dateMatch = chunk.match(
+      /\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\w*\s+(\d{1,2}),?\s+(\d{4})\b/
     );
+    if (!dateMatch) continue;
 
-    if (!titleMatch || !dateMatch) return null;
+    const month = MONTH_MAP[dateMatch[1]];
+    const day = parseInt(dateMatch[2], 10);
+    const year = parseInt(dateMatch[3], 10);
+    const pubDate = new Date(Date.UTC(year, month, day)).toUTCString();
 
-    const rawTitle = titleMatch[1].replace(/\s*[\\|–]\s*Anthropic\s*$/, '').trim();
-    const description = descMatch ? descMatch[1].trim() : rawTitle;
+    // Title: usually the first substantial text segment after the slug
+    // Heuristic: first quoted/unquoted block of 10–120 chars before the date
+    const beforeDate = chunk.slice(0, chunk.indexOf(dateMatch[0]));
+    const titleMatch = beforeDate.match(
+      /([A-Z“‘][^.!?]{9,119}[^.!?\s])\s*$/
+    );
+    const title = titleMatch ? titleMatch[1].trim() : slug.replace(/-/g, ' ');
 
-    // Parse date into RFC 2822 for RSS
-    const dateStr = `${dateMatch[1]} ${dateMatch[2]}, ${dateMatch[3]}`;
-    const parsed = new Date(dateStr);
-    if (isNaN(parsed.getTime())) return null;
+    // Description: text after the date (up to ~200 chars, before category word)
+    const afterDate = chunk.slice(chunk.indexOf(dateMatch[0]) + dateMatch[0].length);
+    const rawDesc = afterDate.replace(/^\s*(Announcements|Policy|Research|Product|News)\s*/i, '').trim();
+    const description = rawDesc.slice(0, 200).trim() || title;
 
-    return {
+    articles.push({
       slug,
-      title: rawTitle,
+      title,
       description,
-      pubDate: parsed.toUTCString(),
+      pubDate,
       url: `https://www.anthropic.com${slug}`,
-    };
-  } catch {
-    return null;
+    });
   }
+
+  return articles.sort(
+    (a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()
+  );
 }
 
 function escapeXml(str: string): string {
@@ -115,24 +136,19 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    const indexHtml = await fetchWithTimeout(ANTHROPIC_NEWS_URL);
-    const slugs = extractSlugs(indexHtml).slice(0, 15);
-
-    // Fetch article metadata in parallel, tolerate individual failures
-    const results = await Promise.allSettled(slugs.map(fetchArticleMeta));
-    const articles = results
-      .filter((r): r is PromiseFulfilledResult<Article> => r.status === 'fulfilled' && r.value !== null)
-      .map((r) => r.value)
-      .sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime());
+    const html = await fetchWithTimeout(ANTHROPIC_NEWS_URL);
+    const articles = parseArticles(html);
 
     if (articles.length === 0) {
-      return res.status(502).send('Failed to parse any articles');
+      return res.status(502).send('Failed to parse any articles from Anthropic news page');
     }
 
     res.setHeader('Content-Type', 'application/rss+xml; charset=utf-8');
     res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=600');
     return res.status(200).send(buildRss(articles));
   } catch (err) {
-    return res.status(502).send(`Scrape failed: ${err instanceof Error ? err.message : String(err)}`);
+    return res
+      .status(502)
+      .send(`Scrape failed: ${err instanceof Error ? err.message : String(err)}`);
   }
 }

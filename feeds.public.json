@@ -157,7 +157,7 @@
     "optional": true
   },
   {
-    "name": "Anthropic News",
+    "name": "Anthropic News Feed",
     "url": "https://rss-reader-three-omega.vercel.app/api/anthropic-news.xml",
     "category": "AI & Work",
     "type": "author"

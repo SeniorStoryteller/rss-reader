@@ -155,5 +155,11 @@
     "category": "AI & Work",
     "type": "author",
     "optional": true
+  },
+  {
+    "name": "Anthropic News",
+    "url": "https://raw.githubusercontent.com/taobojlen/anthropic-rss-feed/main/anthropic_news_rss.xml",
+    "category": "AI & Work",
+    "type": "author"
   }
 ]

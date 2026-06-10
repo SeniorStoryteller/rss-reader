@@ -150,6 +150,12 @@
     "type": "video"
   },
   {
+    "name": "Every Inc",
+    "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCjIMtrzxYc0lblGhmOgC_CA",
+    "category": "AI Critique",
+    "type": "video"
+  },
+  {
     "name": "Anthropic Twitter Feed",
     "url": "https://nitter.net/AnthropicAI/rss",
     "category": "AI & Work",

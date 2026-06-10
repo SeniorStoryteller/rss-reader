@@ -7,6 +7,11 @@ import type { FeedConfig, FeedItem, FailedFeed } from './types';
 type CustomItem = {
   mediaContent?: { $?: { url?: string } };
   mediaThumbnail?: { $?: { url?: string } };
+  // YouTube nests thumbnails inside <media:group> rather than at item level
+  mediaGroup?: {
+    'media:thumbnail'?: Array<{ $?: { url?: string } }>;
+    'media:content'?: Array<{ $?: { url?: string } }>;
+  };
 };
 
 const MAX_ITEMS_PER_FEED = 20;
@@ -29,6 +34,7 @@ const parser = new Parser<Record<string, never>, CustomItem>({
     item: [
       ['media:content', 'mediaContent'],
       ['media:thumbnail', 'mediaThumbnail'],
+      ['media:group', 'mediaGroup'],
     ],
   },
 });
@@ -39,15 +45,23 @@ function extractImageUrl(item: Parser.Item & CustomItem): string | undefined {
     if (item.enclosure.url.startsWith('https://')) return item.enclosure.url;
   }
 
-  // 2. media:content
+  // 2. media:content (top-level)
   const mediaContentUrl = item.mediaContent?.$?.url;
   if (mediaContentUrl?.startsWith('https://')) return mediaContentUrl;
 
-  // 3. media:thumbnail
+  // 3. media:thumbnail (top-level)
   const mediaThumbnailUrl = item.mediaThumbnail?.$?.url;
   if (mediaThumbnailUrl?.startsWith('https://')) return mediaThumbnailUrl;
 
-  // 4. first <img src="https://..."> in content HTML
+  // 4. media:group > media:thumbnail (YouTube Atom feeds)
+  const groupThumbnailUrl = item.mediaGroup?.['media:thumbnail']?.[0]?.$?.url;
+  if (groupThumbnailUrl?.startsWith('https://')) return groupThumbnailUrl;
+
+  // 5. media:group > media:content (fallback)
+  const groupContentUrl = item.mediaGroup?.['media:content']?.[0]?.$?.url;
+  if (groupContentUrl?.startsWith('https://')) return groupContentUrl;
+
+  // 6. first <img src="https://..."> in content HTML
   const html = item.content || item.summary || '';
   const match = html.match(/<img[^>]+src=["'](https:\/\/[^"']+)["']/i);
   if (match?.[1]) return match[1];

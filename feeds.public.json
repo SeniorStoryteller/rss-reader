@@ -150,6 +150,12 @@
     "type": "video"
   },
   {
+    "name": "Anthropic Red",
+    "url": "https://rss-reader-three-omega.vercel.app/api/anthropic-red.xml",
+    "category": "AI & Work",
+    "type": "author"
+  },
+  {
     "name": "Anthropic Twitter Feed",
     "url": "https://nitter.net/AnthropicAI/rss",
     "category": "AI & Work",

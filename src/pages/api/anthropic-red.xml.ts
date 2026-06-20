@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-const RED_URL = 'https://red.anthropic.com/';
+// red.anthropic.com now permanently redirects here
+const SOURCE_URL = 'https://www.anthropic.com/research/team/frontier-red-team';
+const BASE_URL = 'https://www.anthropic.com';
 const FETCH_TIMEOUT_MS = 8000;
 const MAX_ITEMS = 20;
 const HEADERS = {
@@ -12,7 +14,6 @@ const HEADERS = {
 interface Article {
   slug: string;
   title: string;
-  description: string;
   pubDate: string;
   url: string;
 }
@@ -29,18 +30,18 @@ async function fetchWithTimeout(url: string): Promise<string> {
   }
 }
 
-const MONTHS: Record<string, number> = {
-  January: 0, February: 1, March: 2, April: 3, May: 4, June: 5,
-  July: 6, August: 7, September: 8, October: 9, November: 10, December: 11,
+const MONTH_MAP: Record<string, number> = {
+  Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
+  Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11,
 };
 
-function parseMonthYear(text: string): string | null {
-  const m = text.trim().match(/^(\w+)\s+(\d{4})$/);
+function parseDate(text: string): string | null {
+  const m = text.trim().match(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\w*\s+(\d{1,2}),?\s+(\d{4})\b/);
   if (!m) return null;
-  const month = MONTHS[m[1]];
-  if (month === undefined) return null;
-  const year = parseInt(m[2], 10);
-  return new Date(Date.UTC(year, month, 1)).toUTCString();
+  const month = MONTH_MAP[m[1]];
+  const day = parseInt(m[2], 10);
+  const year = parseInt(m[3], 10);
+  return new Date(Date.UTC(year, month, day)).toUTCString();
 }
 
 function innerText(html: string): string {
@@ -48,50 +49,42 @@ function innerText(html: string): string {
 }
 
 function parseArticles(html: string): Article[] {
-  const articles: Article[] = [];
+  // The page uses the same PublicationList layout as anthropic.com/news.
+  // Each card: <a href="/research/slug" class="...listItem">
+  //   <div class="...meta"><time class="...date body-3">Jun 8, 2026</time>...</div>
+  //   <span class="...title body-3">Title text</span>
+  // </a>
+  const cardPattern =
+    /<a\s[^>]*href="(\/research\/[a-z0-9][a-z0-9-]+)"[^>]*>([\s\S]{20,800}?)<\/a>/g;
+
   const seen = new Set<string>();
-  let currentPubDate = '';
+  const articles: Article[] = [];
 
-  // Match date headers and article anchors in document order.
-  // Group 1: date header text ("June 2026")
-  // Group 2: article href ("2026/n-days/")
-  // Group 3: article body (content between <a> tags)
-  const pattern =
-    /<div class="date">([^<]+)<\/div>|<a href="([^"]+)" class="note">([\s\S]{10,2000}?)<\/a>/g;
-
-  for (const m of html.matchAll(pattern)) {
-    if (m[1] !== undefined) {
-      // Date header — update current date context
-      const parsed = parseMonthYear(m[1]);
-      if (parsed) currentPubDate = parsed;
-      continue;
-    }
-
+  for (const m of html.matchAll(cardPattern)) {
     if (articles.length >= MAX_ITEMS) break;
-    if (!currentPubDate) continue;
-
-    const href = m[2];
-    const body = m[3];
-
-    // Normalise href to a slug key for dedup (strip trailing slash)
-    const slug = href.replace(/\/$/, '');
+    const slug = m[1];
     if (seen.has(slug)) continue;
     seen.add(slug);
 
-    // Title: <h3> inside the anchor
-    const h3Match = body.match(/<h3[^>]*>([\s\S]*?)<\/h3>/);
-    const title = h3Match ? innerText(h3Match[1]) : slug.split('/').pop()?.replace(/-/g, ' ') ?? slug;
+    const body = m[2];
+
+    // Date from <time> element
+    const timeMatch = body.match(/<time[^>]*>([^<]+)<\/time>/);
+    if (!timeMatch) continue;
+    const pubDate = parseDate(timeMatch[1]);
+    if (!pubDate) continue;
+
+    // Title from <span class="....__title body-3">
+    const spanMatch = body.match(/<span[^>]*__title[^>]*>([\s\S]*?)<\/span>/);
+    const title = spanMatch ? innerText(spanMatch[1]) : slug.split('/').pop()?.replace(/-/g, ' ') ?? slug;
     if (!title) continue;
 
-    // Description: <div class="description"> inside the anchor
-    const descMatch = body.match(/<div class="description">([\s\S]*?)<\/div>/);
-    const description = descMatch ? innerText(descMatch[1]).slice(0, 300) : title;
-
-    const url = `https://red.anthropic.com/${href}`;
-    articles.push({ slug, title, description, pubDate: currentPubDate, url });
+    articles.push({ slug, title, pubDate, url: `${BASE_URL}${slug}` });
   }
 
-  return articles;
+  return articles.sort(
+    (a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()
+  );
 }
 
 function escapeXml(str: string): string {
@@ -110,7 +103,7 @@ function buildRss(articles: Article[]): string {
   <item>
     <title>${escapeXml(a.title)}</title>
     <link>${escapeXml(a.url)}</link>
-    <description>${escapeXml(a.description)}</description>
+    <description>${escapeXml(a.title)}</description>
     <guid isPermaLink="true">${escapeXml(a.url)}</guid>
     <pubDate>${a.pubDate}</pubDate>
   </item>`
@@ -121,9 +114,9 @@ function buildRss(articles: Article[]): string {
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Anthropic Red Team Research</title>
-    <link>https://red.anthropic.com/</link>
-    <description>Security research and vulnerability disclosure from Anthropic</description>
-    <atom:link href="https://red.anthropic.com/" rel="self" type="application/rss+xml"/>
+    <link>${SOURCE_URL}</link>
+    <description>Security research and vulnerability disclosure from Anthropic's Frontier Red Team</description>
+    <atom:link href="${SOURCE_URL}" rel="self" type="application/rss+xml"/>
     <language>en</language>${items}
   </channel>
 </rss>`;
@@ -134,11 +127,11 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    const html = await fetchWithTimeout(RED_URL);
+    const html = await fetchWithTimeout(SOURCE_URL);
     const articles = parseArticles(html);
 
     if (articles.length === 0) {
-      return res.status(502).send('Failed to parse any articles from red.anthropic.com');
+      return res.status(502).send('Failed to parse any articles from Anthropic Red Team page');
     }
 
     res.setHeader('Content-Type', 'application/rss+xml; charset=utf-8');

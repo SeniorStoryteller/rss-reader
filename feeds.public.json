@@ -150,6 +150,12 @@
     "type": "video"
   },
   {
+    "name": "ZDNet AI",
+    "url": "https://news.google.com/rss/search?q=site:zdnet.com+artificial+intelligence&hl=en-US&gl=US&ceid=US:en",
+    "category": "AI & Work",
+    "type": "author"
+  },
+  {
     "name": "Anthropic Red",
     "url": "https://rss-reader-three-omega.vercel.app/api/anthropic-red.xml",
     "category": "AI & Work",

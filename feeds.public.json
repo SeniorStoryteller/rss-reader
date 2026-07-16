@@ -151,7 +151,7 @@
   },
   {
     "name": "ZDNet AI",
-    "url": "https://news.google.com/rss/search?q=site:zdnet.com+artificial+intelligence&hl=en-US&gl=US&ceid=US:en",
+    "url": "https://rss-reader-three-omega.vercel.app/api/zdnet-ai.xml",
     "category": "AI & Work",
     "type": "author"
   },

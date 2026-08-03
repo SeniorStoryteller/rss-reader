@@ -1,5 +1,9 @@
 import sanitizeHtmlLib from 'sanitize-html';
 
+export function decodeEntities(text: string): string {
+  return sanitizeHtmlLib(text, { allowedTags: [], allowedAttributes: {} });
+}
+
 export function sanitizeHtml(dirty: string): string {
   return sanitizeHtmlLib(dirty, {
     allowedTags: ['a', 'b', 'br', 'em', 'i', 'img', 'li', 'ol', 'p', 'strong', 'ul'],

@@ -1,5 +1,5 @@
 import Parser from 'rss-parser';
-import { sanitizeHtml } from './sanitize';
+import { sanitizeHtml, decodeEntities } from './sanitize';
 import { parseDate } from './dates';
 import { readCache, writeCache, type FeedCache } from './feedCache';
 import type { FeedConfig, FeedItem, FailedFeed } from './types';
@@ -124,7 +124,7 @@ async function fetchSingleFeed(
   return (feed.items || []).slice(0, MAX_ITEMS_PER_FEED).map((item) => {
     const imageUrl = extractImageUrl(item);
     return {
-      title: item.title || 'Untitled',
+      title: decodeEntities(item.title || 'Untitled'),
       link: item.link || '',
       timestamp: parseDate(item.isoDate, item.pubDate),
       pubDate: item.isoDate || item.pubDate || '',

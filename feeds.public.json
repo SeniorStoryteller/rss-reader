@@ -150,12 +150,6 @@
     "type": "video"
   },
   {
-    "name": "ZDNet AI",
-    "url": "https://rss-reader-three-omega.vercel.app/api/zdnet-ai.xml",
-    "category": "AI & Work",
-    "type": "author"
-  },
-  {
     "name": "Anthropic Red",
     "url": "https://rss-reader-three-omega.vercel.app/api/anthropic-red.xml",
     "category": "AI & Work",
